@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENEM DB - GitHub Repositories</title>
+    <title>ENEM Hub | O Maior Banco de Questões do ENEM</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,639 +21,704 @@
             theme: {
                 extend: {
                     colors: {
-                        ghBg: '#0d1117',
-                        ghCard: '#161b22',
-                        ghBorder: '#30363d',
-                        ghText: '#c9d1d9',
-                        ghMuted: '#8b949e',
-                        ghBlue: '#58a6ff',
-                        ghGreen: '#238636',
-                        ghGreenHover: '#2ea043',
-                        ghRed: '#f85149'
+                        primary: '#2563eb',
+                        secondary: '#475569',
+                        dark: '#0f172a',
+                        darkCard: '#1e293b'
                     },
                     fontFamily: {
-                        sans:['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
-                        mono:['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace']
+                        sans:['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- MathJax para Equações Complexas do ENEM -->
+    <!-- MathJax for Mathematical Equations -->
     <script>
         window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
-            startup: { typeset: false } // Nós disparamos manualmente após o render
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* Custom Scrollbar similar ao GitHub */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0d1117;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 5px;
-            border: 2px solid #0d1117;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #484f58;
-        }
-
-        /* Animações e UI states */
-        .github-radio:checked + div {
-            background-color: #1f6feb;
-            border-color: #1f6feb;
-        }
+        body { font-family: 'Inter', sans-serif; }
         
-        .show-results .correct-option {
-            background-color: rgba(46, 160, 67, 0.1) !important;
-            border-color: #2ea043 !important;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .show-results .correct-option .option-label,
-        .show-results .correct-option .option-text {
-            color: #3fb950 !important;
-            font-weight: 600;
+
+        /* Skeletons */
+        .skeleton {
+            background-image: linear-gradient(90deg, #e2e8f0 0px, #f1f5f9 40px, #e2e8f0 80px);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
         }
+        .dark .skeleton {
+            background-image: linear-gradient(90deg, #334155 0px, #475569 40px, #334155 80px);
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Card and Interactions */
+        .alternative-item { transition: all 0.2s ease; }
+        .letter-circle { transition: all 0.2s ease; }
         
-        .show-results .wrong-selected {
-            background-color: rgba(248, 81, 73, 0.1) !important;
-            border-color: #f85149 !important;
-        }
-        .show-results .wrong-selected .option-label,
-        .show-results .wrong-selected .option-text {
-            color: #ff7b72 !important;
-        }
-
-        .checkbox-custom:checked + div {
-            background-color: #1f6feb;
-            border-color: #1f6feb;
-        }
-        .checkbox-custom:checked + div i {
-            display: block;
-        }
-
-        .terminal-blink::after {
-            content: '█';
-            animation: blink 1s step-start infinite;
-            color: #8b949e;
-            margin-left: 4px;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
+        /* Select Reset */
+        select { outline: none; }
     </style>
 </head>
-<body class="bg-ghBg text-ghText font-sans h-screen overflow-hidden flex selection:bg-ghBlue selection:text-white">
+<body class="bg-gray-50 text-gray-800 dark:bg-dark dark:text-gray-200 transition-colors duration-300 antialiased flex flex-col min-h-screen">
 
-    <!-- Overlay Mobile -->
-    <div id="mobile-overlay" class="fixed inset-0 bg-black/70 z-40 hidden transition-opacity lg:hidden backdrop-blur-sm"></div>
-
-    <!-- Sidebar de Filtros -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-ghCard border-r border-ghBorder flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:relative h-full shadow-2xl">
-        <div class="p-6 border-b border-ghBorder flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold flex items-center gap-3 text-ghText">
-                    <i class="fa-brands fa-github text-2xl text-white"></i>
-                    ENEM <span class="text-ghBlue">DataHub</span>
-                </h1>
-                <p class="text-[11px] text-ghMuted mt-1.5 font-mono">/datasets/brazilian-exams</p>
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-graduation-cap text-primary text-3xl mr-3"></i>
+                    <span class="font-extrabold text-2xl tracking-tight text-gray-900 dark:text-white">ENEM<span class="text-primary">Hub</span></span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition flex items-center justify-center w-10 h-10">
+                        <i class="fa-solid fa-moon text-gray-600 dark:text-gray-300 text-lg"></i>
+                    </button>
+                    <a href="https://github.com/yunger7/enem-api" target="_blank" class="p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition flex items-center justify-center w-10 h-10" title="API Fonte no GitHub">
+                        <i class="fa-brands fa-github text-gray-700 dark:text-gray-200 text-xl"></i>
+                    </a>
+                </div>
             </div>
-            <button id="close-sidebar" class="lg:hidden text-ghMuted hover:text-white transition-colors">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
         </div>
+    </nav>
 
-        <div class="p-5 flex-1 overflow-y-auto">
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-sm font-semibold text-ghText flex items-center gap-2">
-                    <i class="fa-solid fa-filter text-ghMuted"></i> Filtros Ativos
+    <!-- Header / Banner (Apenas Desktop) -->
+    <header class="bg-primary text-white py-12 relative overflow-hidden rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-7xl mt-6 shadow-xl hidden md:block">
+        <div class="absolute inset-0 opacity-10 flex flex-wrap gap-12 justify-center items-center pointer-events-none text-6xl select-none">
+            <i class="fa-solid fa-calculator"></i>
+            <i class="fa-solid fa-flask"></i>
+            <i class="fa-solid fa-book"></i>
+            <i class="fa-solid fa-globe"></i>
+            <i class="fa-solid fa-atom"></i>
+            <i class="fa-solid fa-dna"></i>
+            <i class="fa-solid fa-chart-line"></i>
+            <i class="fa-solid fa-language"></i>
+        </div>
+        <div class="relative max-w-4xl mx-auto px-6 text-center z-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">O Maior Banco de Questões do ENEM</h1>
+            <p class="text-lg md:text-xl text-blue-100 mb-0 font-light drop-shadow">Estude de forma gratuita com milhares de questões das provas anteriores, atualizadas dinamicamente.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar Filters -->
+        <aside class="w-full md:w-80 flex-shrink-0">
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-24 transition-colors duration-300">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center border-b border-gray-100 dark:border-gray-700 pb-4">
+                    <i class="fa-solid fa-filter text-primary mr-3"></i> Filtrar Questões
                 </h2>
-                <button id="clear-filters" class="text-xs text-ghBlue hover:underline hidden font-medium">Limpar</button>
-            </div>
-            
-            <div class="mb-7">
-                <h3 class="text-[11px] font-bold text-ghMuted uppercase tracking-wider mb-3 font-mono">Ano de Aplicação</h3>
-                <div id="filter-years" class="space-y-1">
-                    <div class="animate-pulse h-5 bg-ghBorder rounded w-full mb-2"></div>
-                </div>
-            </div>
-            
-            <div class="mb-7">
-                <h3 class="text-[11px] font-bold text-ghMuted uppercase tracking-wider mb-3 font-mono">Área do Conhecimento</h3>
-                <div id="filter-disciplines" class="space-y-1">
-                    <div class="animate-pulse h-5 bg-ghBorder rounded w-full mb-2"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="p-4 border-t border-ghBorder bg-[#0d1117]">
-            <div class="text-[10px] text-ghMuted font-mono flex items-center justify-center gap-2">
-                <i class="fa-solid fa-circle text-ghGreen text-[8px]"></i> Raw GitHub Fetcher Ativo
-            </div>
-        </div>
-    </aside>
-
-    <!-- Conteúdo Principal -->
-    <main class="flex-1 flex flex-col min-w-0 relative bg-ghBg">
-        
-        <!-- Header Superior -->
-        <header class="h-16 flex items-center px-4 sm:px-6 border-b border-ghBorder bg-ghCard/95 backdrop-blur z-10 shrink-0">
-            <button id="menu-toggle" class="lg:hidden text-ghMuted hover:text-white mr-4 transition-colors">
-                <i class="fa-solid fa-bars text-lg"></i>
-            </button>
-            
-            <div class="relative w-full max-w-2xl flex items-center">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 text-ghMuted text-sm"></i>
-                <input type="text" id="search-input" placeholder="Pesquisar termo no banco de dados..." class="w-full pl-9 pr-4 py-1.5 bg-ghBg border border-ghBorder rounded-md text-sm text-ghText placeholder-ghMuted focus:outline-none focus:border-ghBlue focus:ring-1 focus:ring-ghBlue transition-all">
-            </div>
-        </header>
-
-        <!-- Stats Bar -->
-        <div class="bg-[#010409] px-6 py-2 border-b border-ghBorder flex justify-between items-center text-[11px] font-mono text-ghMuted shrink-0">
-            <span id="results-stats">Aguardando extração...</span>
-            <span id="db-status" class="text-ghBlue"><i class="fa-solid fa-satellite-dish fa-fade mr-1"></i> Conectando...</span>
-        </div>
-
-        <!-- Área de Rolagem -->
-        <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scroll-smooth" id="scroll-area">
-            <div class="max-w-4xl mx-auto">
                 
-                <!-- Terminal de Status (O Segredo da Nova Estratégia) -->
-                <div id="terminal-container" class="bg-[#0d1117] border border-ghBorder rounded-lg p-4 font-mono text-[11px] sm:text-xs text-ghMuted mb-8 shadow-inner max-h-48 overflow-y-auto">
-                    <div class="text-ghBlue mb-2"><i class="fa-solid fa-terminal mr-2"></i>GitHub Repositories Aggregator v1.0</div>
-                    <div id="terminal-logs" class="space-y-1 terminal-blink"></div>
-                </div>
-
-                <div id="questions-container" class="space-y-6 pb-8">
-                    <!-- Skeletons (Carregando) -->
-                    <div class="animate-pulse bg-ghCard border border-ghBorder rounded-xl p-6">
-                        <div class="h-4 bg-ghBorder rounded w-1/4 mb-6"></div>
-                        <div class="h-3 bg-ghBorder rounded w-full mb-3"></div>
-                        <div class="h-3 bg-ghBorder rounded w-5/6 mb-8"></div>
-                        <div class="space-y-3">
-                            <div class="h-10 bg-[#0d1117] rounded border border-ghBorder w-full"></div>
-                            <div class="h-10 bg-[#0d1117] rounded border border-ghBorder w-full"></div>
+                <div class="space-y-6">
+                    
+                    <!-- Ano -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-regular fa-calendar text-primary mr-1 w-5 text-center"></i> Ano da Prova
+                        </label>
+                        <div class="relative">
+                            <select id="filter-year" class="appearance-none w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium">
+                                <option value="">Carregando anos...</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- Matéria -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-solid fa-book-open text-primary mr-1 w-5 text-center"></i> Área de Conhecimento
+                        </label>
+                        <div class="relative">
+                            <select id="filter-discipline" class="appearance-none w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium">
+                                <option value="all">Todas as Áreas</option>
+                                <option value="ciencias-humanas">Ciências Humanas</option>
+                                <option value="ciencias-natureza">Ciências da Natureza</option>
+                                <option value="linguagens">Linguagens e Códigos</option>
+                                <option value="matematica">Matemática</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Idioma -->
+                    <div id="language-container">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-solid fa-language text-primary mr-1 w-5 text-center"></i> Idioma (Linguagens)
+                        </label>
+                        <div class="relative">
+                            <select id="filter-language" class="appearance-none w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium">
+                                <option value="all">Ambos</option>
+                                <option value="ingles">Inglês</option>
+                                <option value="espanhol">Espanhol</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
+                                <i class="fa-solid fa-chevron-down text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo (Keyword) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-solid fa-magnifying-glass text-primary mr-1 w-5 text-center"></i> Conteúdo / Palavra-chave
+                        </label>
+                        <input type="text" id="filter-keyword" placeholder="Ex: Vargas, Fotossíntese, Logaritmo..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 transition-colors font-medium">
+                    </div>
+
+                    <!-- Botão Buscar -->
+                    <button id="btn-search" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center mt-4">
+                        <i class="fa-solid fa-search mr-2"></i> Buscar Questões
+                    </button>
                 </div>
-                
-                <div id="pagination-container" class="pb-10"></div>
             </div>
-        </div>
+        </aside>
+
+        <!-- Feed (Resultados) -->
+        <section class="flex-grow min-w-0">
+            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-6 md:mt-0">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Resultados da Busca</h2>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1" id="results-count">Aguardando pesquisa...</p>
+                </div>
+            </div>
+
+            <!-- Loader (Skeleton) -->
+            <div id="loader" class="hidden space-y-6">
+                <!-- Gera 3 skeletons -->
+                <script>
+                    for(let i=0; i<3; i++) {
+                        document.write(`
+                        <div class="bg-white dark:bg-darkCard rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 w-full mb-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="skeleton h-7 w-2/4 rounded-lg"></div>
+                                <div class="skeleton h-6 w-24 rounded-full"></div>
+                            </div>
+                            <div class="skeleton h-4 w-full rounded mb-3"></div>
+                            <div class="skeleton h-4 w-full rounded mb-3"></div>
+                            <div class="skeleton h-4 w-3/4 rounded mb-8"></div>
+                            <div class="space-y-4">
+                                <div class="skeleton h-14 w-full rounded-xl"></div>
+                                <div class="skeleton h-14 w-full rounded-xl"></div>
+                                <div class="skeleton h-14 w-full rounded-xl"></div>
+                                <div class="skeleton h-14 w-full rounded-xl"></div>
+                                <div class="skeleton h-14 w-full rounded-xl"></div>
+                            </div>
+                        </div>`);
+                    }
+                </script>
+            </div>
+
+            <!-- Container das Questões -->
+            <div id="questions-container" class="space-y-8" data-loaded-year="">
+                <!-- As questões serão renderizadas aqui via JS -->
+            </div>
+            
+            <!-- Estado Vazio (Sem resultados) -->
+            <div id="empty-state" class="hidden text-center py-20 bg-white dark:bg-darkCard rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm mt-4">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50 dark:bg-gray-800 mb-6">
+                    <i class="fa-solid fa-box-open text-3xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Nenhuma questão encontrada</h3>
+                <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Não encontramos nenhuma questão para os filtros selecionados. Tente alterar o ano, a área de conhecimento ou remova as palavras-chave.</p>
+            </div>
+        </section>
     </main>
 
-    <!-- MOTOR DE DADOS DO SITE -->
+    <!-- Botão Voltar ao Topo -->
+    <button id="btn-top" class="fixed bottom-8 right-8 bg-primary hover:bg-blue-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl transition-all duration-300 opacity-0 invisible translate-y-4 z-50 text-xl">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto py-10 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <i class="fa-solid fa-graduation-cap text-primary text-3xl mr-3"></i>
+                <span class="font-extrabold text-2xl text-gray-900 dark:text-white">ENEM<span class="text-primary">Hub</span></span>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mb-6 font-medium">Plataforma moderna para estudos e resolução de questões do ENEM.</p>
+            <p class="text-sm text-gray-400 dark:text-gray-500 mt-6">
+                &copy; 2026 ENEM Hub. <br class="sm:hidden">
+                Dados puxados de repositórios Open Source e APIs Públicas.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Aplicação JavaScript -->
     <script>
-        const state = {
-            questions: [],
-            filteredQuestions: [],
-            filters: { year: [], discipline:[], search: '' },
-            currentPage: 1,
-            itemsPerPage: 10,
-            loading: true
-        };
+        const API_BASE = 'https://api.enem.dev/v1';
+        let currentYearData =[];
+        let isFetching = false;
 
-        // Repositórios Brutos (RAW) de NLP/IA - Garantia anti-bloqueio
-        const GITHUB_SOURCES =[
-            { repo: 'viniciusarruda/llm-enem', file: 'enem_2022_0_shot.json', url: 'https://raw.githubusercontent.com/viniciusarruda/llm-enem/main/dataset/enem/enem_2022_0_shot.json', year: 2022 },
-            { repo: 'viniciusarruda/llm-enem', file: 'enem_2022_3_shot.json', url: 'https://raw.githubusercontent.com/viniciusarruda/llm-enem/main/dataset/enem/enem_2022_3_shot.json', year: 2022 },
-            { repo: 'piresramon/gpt-4-enem', file: '2023.json', url: 'https://raw.githubusercontent.com/piresramon/gpt-4-enem/main/data/ENEM_2023.json', year: 2023 },
-            // Fallback CDN Global caso a rede da empresa do usuário bloqueie o raw.githubusercontent.com
-            { repo: 'jsdelivr/viniciusarruda', file: 'fallback.json', url: 'https://cdn.jsdelivr.net/gh/viniciusarruda/llm-enem@main/dataset/enem/enem_2022_0_shot.json', year: 2022 }
-        ];
-
+        // Configuração Inicial e Eventos
         document.addEventListener('DOMContentLoaded', () => {
-            setupUI();
-            executeGitHubExtraction();
+            initTheme();
+            loadFilters();
+            
+            // Scroll to Top Listener
+            window.addEventListener('scroll', () => {
+                const btn = document.getElementById('btn-top');
+                if (window.scrollY > 400) {
+                    btn.classList.remove('opacity-0', 'invisible', 'translate-y-4');
+                    btn.classList.add('opacity-100', 'visible', 'translate-y-0');
+                } else {
+                    btn.classList.add('opacity-0', 'invisible', 'translate-y-4');
+                    btn.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                }
+            });
+
+            document.getElementById('btn-top').addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Botão de Busca
+            document.getElementById('btn-search').addEventListener('click', triggerSearch);
+            
+            // Submeter com a tecla Enter no input de busca
+            document.getElementById('filter-keyword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') triggerSearch();
+            });
+            
+            // Dinamismo do dropdown de Idioma
+            document.getElementById('filter-discipline').addEventListener('change', (e) => {
+                const langContainer = document.getElementById('language-container');
+                if (e.target.value === 'linguagens' || e.target.value === 'all') {
+                    langContainer.style.display = 'block';
+                    langContainer.classList.add('fade-in');
+                } else {
+                    langContainer.style.display = 'none';
+                    document.getElementById('filter-language').value = 'all';
+                }
+            });
         });
 
-        // ----------------------------------------------------------------
-        // 1. EXTRAÇÃO DESCENTRALIZADA E NORMALIZAÇÃO (A Nova Estratégia)
-        // ----------------------------------------------------------------
-        function log(msg, type = 'info') {
-            const logs = document.getElementById('terminal-logs');
-            let color = 'text-ghMuted';
-            if(type === 'success') color = 'text-[#3fb950]';
-            if(type === 'error') color = 'text-[#f85149]';
-            if(type === 'warn') color = 'text-[#d29922]';
+        // Alternância de Tema (Dark/Light)
+        function initTheme() {
+            const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            const icon = document.querySelector('#theme-toggle i');
             
-            const line = document.createElement('div');
-            line.className = color;
-            line.innerHTML = `> ${msg}`;
-            logs.appendChild(line);
-            
-            const container = document.getElementById('terminal-container');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        async function executeGitHubExtraction() {
-            log('Iniciando pipeline de extração de dados brutos...');
-            const allExtractedQuestions =[];
-            const signatures = new Set(); // Para evitar duplicatas
-
-            // Executa o fetch de todos os repositórios paralelamente
-            const fetchPromises = GITHUB_SOURCES.map(async (src) => {
-                log(`[GET] ${src.repo} -> ${src.file}...`);
-                try {
-                    const response = await fetch(src.url, { cache: 'no-store' });
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    
-                    const data = await response.json();
-                    log(`[SUCCESS] JSON decodificado de ${src.repo}`, 'success');
-                    
-                    const normalized = normalizeDataset(data, src.year);
-                    log(`[PARSER] ${normalized.length} questões estruturadas de ${src.file}.`);
-                    return normalized;
-
-                } catch (err) {
-                    log(`[SKIP] Falha ao acessar ${src.repo}/${src.file} (${err.message})`, 'warn');
-                    return[];
-                }
-            });
-
-            const results = await Promise.allSettled(fetchPromises);
-            
-            results.forEach(res => {
-                if (res.status === 'fulfilled') {
-                    res.value.forEach(q => {
-                        // Cria uma assinatura única para a questão (evita repetição entre repositórios)
-                        const sig = q.question.substring(0, 30).toLowerCase().replace(/[^a-z0-9]/g, '');
-                        if (!signatures.has(sig) && q.alternatives.length > 0) {
-                            signatures.add(sig);
-                            allExtractedQuestions.push(q);
-                        }
-                    });
-                }
-            });
-
-            state.loading = false;
-            document.getElementById('terminal-logs').classList.remove('terminal-blink');
-
-            if (allExtractedQuestions.length === 0) {
-                log('[CRITICAL ERROR] Nenhum repositório respondeu. Seu provedor ou firewall corporativo está bloqueando o GitHub.', 'error');
-                document.getElementById('db-status').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-ghRed"></i> Falha Total`;
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                icon.classList.replace('fa-moon', 'fa-sun');
             } else {
-                log(`[COMPLETE] Banco de dados montado. Total: ${allExtractedQuestions.length} questões únicas.`, 'success');
-                state.questions = allExtractedQuestions;
-                state.filteredQuestions = [...allExtractedQuestions];
+                document.documentElement.classList.remove('dark');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+            
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                const isNowDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
                 
-                document.getElementById('db-status').innerHTML = `<i class="fa-solid fa-check text-ghGreen"></i> Sistema Operante`;
-                document.getElementById('db-status').classList.replace('text-ghBlue', 'text-ghGreen');
-                
-                setTimeout(() => {
-                    document.getElementById('terminal-container').classList.add('hidden');
-                }, 4000); // Esconde o terminal após 4s de sucesso para limpar a UI
+                if(isNowDark) {
+                    icon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    icon.classList.replace('fa-sun', 'fa-moon');
+                }
+            });
+        }
 
-                renderFilters();
-                renderQuestions();
+        // Carrega os anos disponíveis a partir da API
+        async function loadFilters() {
+            const yearSelect = document.getElementById('filter-year');
+            try {
+                const res = await fetch(`${API_BASE}/exams`);
+                if(!res.ok) throw new Error('Falha ao carregar provas da API');
+                const data = await res.json();
+                
+                // Extrai anos únicos ordenados do mais recente ao mais antigo
+                let years = [...new Set(data.map(e => e.year))].sort((a, b) => b - a);
+                if (years.length === 0) throw new Error('Nenhum ano encontrado');
+                
+                populateYears(years);
+            } catch (e) {
+                console.warn("Erro ao buscar filtros na API principal. Usando fallback de anos.", e);
+                // Fallback seguro em caso de rate limit inicial
+                populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]);
             }
         }
 
-        // Função camaleão: Aceita quase qualquer formato JSON de IA e transforma no formato da UI
-        function normalizeDataset(jsonData, defaultYear) {
-            let extracted =[];
-            // O dataset pode ser um Array direto ou um Objeto (ex: {"q1": {...}, "q2": {...}})
-            let items = Array.isArray(jsonData) ? jsonData : Object.values(jsonData);
-            
-            // Tratamento caso venha envelopado
-            if (!Array.isArray(items) && items.questions) items = items.questions;
-            if (!Array.isArray(items) && items.data) items = items.data;
-
-            if(!Array.isArray(items)) return[];
-
-            items.forEach(item => {
-                if(!item || typeof item !== 'object') return;
-                
-                let qText = item.question || item.enunciado || item.text || item.statement || '';
-                if(typeof qText !== 'string' || qText.length < 10) return;
-                
-                let ctx = item.context || item.support_text || item.texto || item.intro || '';
-                let alternatives =[];
-                let correctFlag = item.answer ?? item.label ?? item.gabarito ?? item.correct;
-                let correctLetter = null;
-
-                if (typeof correctFlag === 'number') {
-                    correctLetter = String.fromCharCode(65 + correctFlag);
-                } else if (typeof correctFlag === 'string') {
-                    correctLetter = correctFlag.trim().toUpperCase();
-                }
-
-                // Tenta extrair das chaves "A", "B", "C", "D", "E"
-                ['A', 'B', 'C', 'D', 'E'].forEach((letter, idx) => {
-                    let optText = item[letter] || item[letter.toLowerCase()];
-                    if(optText) {
-                        alternatives.push({
-                            letter: letter,
-                            text: optText,
-                            isCorrect: (letter === correctLetter || correctFlag === idx)
-                        });
-                    }
-                });
-
-                // Se não encontrou, tenta procurar no array 'alternatives' ou 'options'
-                if(alternatives.length === 0) {
-                    const opts = item.alternatives || item.options ||[];
-                    opts.forEach((opt, idx) => {
-                        let l = String.fromCharCode(65 + idx);
-                        let t = typeof opt === 'string' ? opt : (opt.text || opt.body || '');
-                        alternatives.push({
-                            letter: l,
-                            text: t,
-                            isCorrect: (l === correctLetter || correctFlag === idx || opt.isCorrect)
-                        });
-                    });
-                }
-
-                if(alternatives.length < 2) return;
-
-                extracted.push({
-                    id: `git-${Math.random().toString(36).substring(2,10)}`,
-                    year: item.year || item.ano || defaultYear,
-                    discipline: inferDiscipline(item.discipline || item.area, qText),
-                    context: ctx,
-                    question: qText,
-                    alternatives: alternatives
-                });
+        function populateYears(years) {
+            const yearSelect = document.getElementById('filter-year');
+            yearSelect.innerHTML = '';
+            years.forEach(y => {
+                yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
             });
-
-            return extracted;
-        }
-
-        // Caso o dataset não especifique a matéria, inferimos pelo texto
-        function inferDiscipline(rawDisc, text) {
-            const raw = String(rawDisc || '').toLowerCase();
-            const t = String(text || '').toLowerCase();
             
-            if (raw.includes('natureza') || t.includes('biologia') || t.includes('física') || t.includes('química') || t.includes('energia')) return 'Ciências da Natureza';
-            if (raw.includes('humana') || t.includes('história') || t.includes('geografia') || t.includes('filosofia') || t.includes('século')) return 'Ciências Humanas';
-            if (raw.includes('linguagem') || t.includes('português') || t.includes('inglês') || t.includes('texto')) return 'Linguagens e Códigos';
-            if (raw.includes('matemática') || raw.includes('math') || t.includes('matemática') || t.includes('função')) return 'Matemática';
-            
-            return 'Conhecimentos Gerais';
-        }
-
-        function getDisciplineColor(disc) {
-            switch(disc) {
-                case 'Ciências da Natureza': return 'text-[#3fb950] border-[#3fb950]/30 bg-[#3fb950]/10';
-                case 'Ciências Humanas': return 'text-[#d29922] border-[#d29922]/30 bg-[#d29922]/10';
-                case 'Linguagens e Códigos': return 'text-[#a371f7] border-[#a371f7]/30 bg-[#a371f7]/10';
-                case 'Matemática': return 'text-[#58a6ff] border-[#58a6ff]/30 bg-[#58a6ff]/10';
-                default: return 'text-ghMuted border-ghBorder bg-[#0d1117]';
+            // Dispara busca inicial
+            if(years.length > 0) {
+                triggerSearch();
             }
         }
 
-        // ----------------------------------------------------------------
-        // 2. LÓGICA DE INTERFACE (Filtros, Renderização, Paginação)
-        // ----------------------------------------------------------------
-        function setupUI() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobile-overlay');
+        function triggerSearch() {
+            const year = document.getElementById('filter-year').value;
+            const discipline = document.getElementById('filter-discipline').value;
+            const language = document.getElementById('filter-language').value;
             
-            const toggle = () => {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
-            };
-
-            document.getElementById('menu-toggle').addEventListener('click', toggle);
-            document.getElementById('close-sidebar').addEventListener('click', toggle);
-            overlay.addEventListener('click', toggle);
-
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                state.filters.search = e.target.value.toLowerCase();
-                state.currentPage = 1;
-                applyFilters();
-            });
-
-            document.getElementById('clear-filters').addEventListener('click', () => {
-                document.querySelectorAll('.filter-checkbox').forEach(cb => cb.checked = false);
-                document.getElementById('search-input').value = '';
-                state.filters = { year: [], discipline:[], search: '' };
-                state.currentPage = 1;
-                applyFilters();
-            });
+            if(year) {
+                fetchAndRenderQuestions(year, discipline, language);
+            }
         }
 
-        function renderFilters() {
-            const years = new Set();
-            const disciplines = new Set();
-
-            state.questions.forEach(q => {
-                years.add(q.year);
-                disciplines.add(q.discipline);
-            });
-
-            document.getElementById('filter-years').innerHTML = Array.from(years).sort((a,b) => b-a).map(y => `
-                <label class="flex items-center p-1.5 hover:bg-[#0d1117] rounded cursor-pointer group transition-colors">
-                    <div class="relative flex items-center justify-center w-4 h-4 mr-3 border border-ghBorder rounded bg-ghBg group-hover:border-ghBlue transition-colors">
-                        <input type="checkbox" value="${y}" class="filter-checkbox filter-year opacity-0 absolute w-full h-full cursor-pointer checkbox-custom">
-                        <div class="w-full h-full rounded pointer-events-none flex items-center justify-center transition-colors">
-                            <i class="fa-solid fa-check text-white text-[9px] hidden"></i>
-                        </div>
-                    </div>
-                    <span class="text-sm text-ghText group-hover:text-white transition-colors">${y}</span>
-                </label>
-            `).join('');
-
-            document.getElementById('filter-disciplines').innerHTML = Array.from(disciplines).sort().map(d => `
-                <label class="flex items-center p-1.5 hover:bg-[#0d1117] rounded cursor-pointer group transition-colors">
-                    <div class="relative flex items-center justify-center w-4 h-4 mr-3 border border-ghBorder rounded bg-ghBg group-hover:border-ghBlue transition-colors">
-                        <input type="checkbox" value="${d}" class="filter-checkbox filter-discipline opacity-0 absolute w-full h-full cursor-pointer checkbox-custom">
-                        <div class="w-full h-full rounded pointer-events-none flex items-center justify-center transition-colors">
-                            <i class="fa-solid fa-check text-white text-[9px] hidden"></i>
-                        </div>
-                    </div>
-                    <span class="text-sm text-ghText group-hover:text-white transition-colors line-clamp-1" title="${d}">${d}</span>
-                </label>
-            `).join('');
-
-            document.querySelectorAll('.filter-checkbox').forEach(cb => {
-                cb.addEventListener('change', () => {
-                    const yearCbs = document.querySelectorAll('.filter-year:checked');
-                    const discCbs = document.querySelectorAll('.filter-discipline:checked');
-                    state.filters.year = Array.from(yearCbs).map(c => String(c.value));
-                    state.filters.discipline = Array.from(discCbs).map(c => c.value);
-                    state.currentPage = 1;
-                    
-                    const btn = document.getElementById('clear-filters');
-                    (state.filters.year.length || state.filters.discipline.length || state.filters.search) 
-                        ? btn.classList.remove('hidden') 
-                        : btn.classList.add('hidden');
-                        
-                    applyFilters();
-                });
-            });
-        }
-
-        function applyFilters() {
-            const s = state.filters.search;
-            state.filteredQuestions = state.questions.filter(q => {
-                const yMatch = !state.filters.year.length || state.filters.year.includes(String(q.year));
-                const dMatch = !state.filters.discipline.length || state.filters.discipline.includes(q.discipline);
-                const sMatch = !s || q.question.toLowerCase().includes(s) || q.context.toLowerCase().includes(s);
-                return yMatch && dMatch && sMatch;
-            });
-            renderQuestions();
-        }
-
-        function formatText(text) {
-            if (!text) return '';
-            let t = String(text);
-            if (t.includes('<p>') || t.includes('<br>')) return t; // Se já tiver html
-            // Processa line breaks para HTML válido e escapa tags maliciosas
-            return t.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br><span class="block mt-1"></span>');
-        }
-
-        function renderQuestions() {
+        // Faz o fetch das questões daquele ano, garantindo salvar na memória para não gastar API atoa
+        async function fetchAndRenderQuestions(year, discipline, language) {
+            if(isFetching) return;
+            
             const container = document.getElementById('questions-container');
-            const stats = document.getElementById('results-stats');
-
-            if (state.filteredQuestions.length === 0 && !state.loading) {
-                stats.innerText = '0 instâncias encontradas';
-                container.innerHTML = `
-                    <div class="border border-ghBorder border-dashed rounded-xl p-12 text-center text-ghMuted">
-                        <i class="fa-solid fa-code-pull-request text-4xl mb-4 text-ghBorder"></i>
-                        <h2 class="text-lg font-semibold text-ghText mb-1">Nenhum resultado</h2>
-                        <p class="text-sm">Altere seus filtros para encontrar questões.</p>
-                    </div>`;
-                document.getElementById('pagination-container').innerHTML = '';
+            const currentLoadedYear = container.getAttribute('data-loaded-year');
+            
+            // Se o ano já estiver carregado em memória, apenas filtramos localmente
+            if (currentLoadedYear === year.toString() && currentYearData.length > 0) {
+                applyFiltersAndRender(discipline, language);
                 return;
             }
 
-            const total = state.filteredQuestions.length;
-            const start = (state.currentPage - 1) * state.itemsPerPage;
-            const end = start + state.itemsPerPage;
-            const slice = state.filteredQuestions.slice(start, end);
-
-            stats.innerHTML = `Mostrando <span class="text-white">${start + 1}-${Math.min(end, total)}</span> de <span class="text-white">${total}</span> issues`;
-
-            container.innerHTML = slice.map(q => {
-                const badgeStyle = getDisciplineColor(q.discipline);
-                // Previne quebra caso a IA não tenha definido a resposta certa no JSON
-                const fallback = q.alternatives.some(a=>a.isCorrect) ? false : true; 
+            isFetching = true;
+            showLoader(true);
+            
+            try {
+                // A API possui o parâmetro limit. Como o Enem tem 180 questões, passamos limit=200
+                const res = await fetch(`${API_BASE}/exams/${year}/questions?limit=200`);
+                if(!res.ok) throw new Error('A API retornou erro');
                 
-                return `
-                <div class="bg-ghCard border border-ghBorder rounded-xl p-6 sm:p-8 hover:border-ghMuted/50 transition-colors shadow-sm relative group" id="q-${q.id}">
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-2.5 py-1 text-[10px] font-mono font-semibold uppercase tracking-wide border rounded-md ${badgeStyle}">
-                            ${q.discipline}
-                        </span>
-                        <span class="px-2.5 py-1 text-[10px] font-mono font-semibold text-ghMuted border border-ghBorder bg-[#0d1117] rounded-md">
-                            ENEM ${q.year}
-                        </span>
-                        <span class="ml-auto text-[10px] font-mono text-ghMuted/50 group-hover:text-ghMuted transition-colors pt-1">
-                            #${q.id}
-                        </span>
-                    </div>
-                    
-                    <div class="mb-7 text-ghText text-[15px] sm:text-base leading-relaxed">
-                        ${q.context ? `<div class="mb-4 text-ghMuted border-l-2 border-ghBorder pl-4 py-1 italic break-words">${formatText(q.context)}</div>` : ''}
-                        <div class="font-medium break-words text-white">${formatText(q.question)}</div>
-                    </div>
-                    
-                    <div class="space-y-2 mb-7">
-                        ${q.alternatives.map((alt, i) => `
-                            <label class="flex items-start p-3.5 rounded-lg border border-ghBorder bg-[#0d1117] hover:bg-[#1f242c] cursor-pointer transition-colors w-full ${(alt.isCorrect || (fallback && i===0)) ? 'correct-option' : 'wrong-option'}">
-                                <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 mr-4 border border-ghMuted rounded-full shrink-0">
-                                    <input type="radio" name="r-${q.id}" value="${alt.letter}" class="github-radio opacity-0 absolute w-full h-full cursor-pointer">
-                                    <div class="w-full h-full rounded-full pointer-events-none transition-colors flex items-center justify-center">
-                                        <div class="w-2 h-2 rounded-full bg-white scale-0 transition-transform"></div>
-                                    </div>
-                                </div>
-                                <div class="flex-1 text-sm leading-relaxed break-words">
-                                    <span class="font-bold text-white mr-1 option-label">${alt.letter}.</span>
-                                    <span class="text-ghText option-text">${formatText(alt.text)}</span>
-                                </div>
-                            </label>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="flex justify-start border-t border-ghBorder pt-5">
-                        <button class="px-4 py-2 bg-[#21262d] hover:bg-[#30363d] border border-ghBorder text-ghText rounded-md font-semibold text-[13px] transition-colors flex items-center gap-2" onclick="revealAnswer('${q.id}', this)">
-                            <i class="fa-regular fa-eye"></i> Revelar Gabarito
+                const data = await res.json();
+                currentYearData = data.questions || data.data || (Array.isArray(data) ? data :[]);
+                
+                if (currentYearData.length === 0) {
+                    throw new Error("A API retornou 0 questões.");
+                }
+
+                container.setAttribute('data-loaded-year', year);
+                applyFiltersAndRender(discipline, language);
+                
+            } catch (e) {
+                console.error("Erro na busca das questões:", e);
+                container.innerHTML = `
+                    <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-8 rounded-2xl border border-red-200 dark:border-red-800/30 text-center fade-in shadow-sm">
+                        <i class="fa-solid fa-triangle-exclamation text-5xl mb-5 opacity-90"></i>
+                        <h3 class="text-2xl font-bold mb-3 text-red-700 dark:text-red-300">Não foi possível carregar as questões</h3>
+                        <p class="mb-6 max-w-lg mx-auto text-red-600/80 dark:text-red-400/80">A API pública de dados do ENEM pode estar passando por manutenção ou seu limite de requisições foi atingido. Aguarde alguns segundos e tente novamente.</p>
+                        <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> Tentar Novamente
                         </button>
                     </div>
-                </div>`;
-            }).join('');
-
-            // Adiciona CSS para o radio interno (o bolinho branco)
-            const style = document.createElement('style');
-            style.innerHTML = `.github-radio:checked + div > div { transform: scale(1); }`;
-            container.appendChild(style);
-
-            renderPagination();
-
-            // Re-renderiza Fórmulas com o MathJax
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                MathJax.typesetPromise([container]).catch(err => console.log('MathJax:', err.message));
+                `;
+                container.setAttribute('data-loaded-year', ''); // Limpa o ano para forçar refetch
+            } finally {
+                showLoader(false);
+                isFetching = false;
             }
         }
 
-        window.revealAnswer = function(id, btn) {
-            const container = document.getElementById(`q-${id}`);
-            container.classList.add('show-results');
+        // Aplica os filtros de interface (Matéria, Idioma, e Texto/Conteúdo) sobre os dados carregados
+        function applyFiltersAndRender(discipline, language) {
+            const keyword = document.getElementById('filter-keyword').value.toLowerCase();
+            let filtered = currentYearData;
             
-            container.querySelectorAll('input').forEach(r => r.disabled = true);
-            
-            const selected = container.querySelector('input[type="radio"]:checked');
-            if (selected) {
-                const label = selected.closest('label');
-                if (!label.classList.contains('correct-option')) label.classList.add('wrong-selected');
+            // Filtro de Matéria
+            if (discipline !== 'all') {
+                filtered = filtered.filter(q => q.discipline === discipline);
             }
             
-            btn.innerHTML = `<i class="fa-solid fa-check"></i> Finalizado`;
-            btn.className = "px-4 py-2 bg-[#238636] border border-[#2ea043] text-white rounded-md font-semibold text-[13px] flex items-center gap-2 cursor-default shadow-sm";
+            // Filtro de Idioma (Somente aplica se for provas de linguagens ou todas)
+            if (discipline === 'all' || discipline === 'linguagens') {
+                if (language !== 'all') {
+                    filtered = filtered.filter(q => !q.language || q.language === language);
+                }
+            }
+            
+            // Filtro de Conteúdo/Palavra-chave
+            if (keyword.trim() !== '') {
+                filtered = filtered.filter(q => {
+                    const contextText = (q.context || '').toLowerCase();
+                    const titleText = (q.title || '').toLowerCase();
+                    const altText = (q.alternatives ||[]).map(a => a.text || '').join(' ').toLowerCase();
+                    
+                    return contextText.includes(keyword) || titleText.includes(keyword) || altText.includes(keyword);
+                });
+            }
+            
+            renderQuestionsHTML(filtered);
+        }
+
+        // Utilitário para evitar Injeção de Código, mas manter segurança
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        // Responsável por desenhar as questões na tela com excelência
+        function renderQuestionsHTML(data) {
+            const container = document.getElementById('questions-container');
+            const emptyState = document.getElementById('empty-state');
+            const resultsCount = document.getElementById('results-count');
+            
+            container.innerHTML = '';
+            
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                resultsCount.innerText = `Nenhuma questão encontrada.`;
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões encontradas.`;
+
+            // Dicionários para estética das badgs
+            const discLabels = {
+                'ciencias-humanas': 'Ciências Humanas',
+                'ciencias-natureza': 'Ciências da Natureza',
+                'linguagens': 'Linguagens e Códigos',
+                'matematica': 'Matemática'
+            };
+            const discColors = {
+                'ciencias-humanas': 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800/50',
+                'ciencias-natureza': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/50',
+                'linguagens': 'bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-800/50',
+                'matematica': 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/50'
+            };
+
+            data.forEach((q, index) => {
+                let badgeText = discLabels[q.discipline] || (q.discipline ? q.discipline.toUpperCase() : 'GERAL');
+                let badgeColor = discColors[q.discipline] || 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
+
+                if(q.language) {
+                    badgeText += ` <span class="opacity-75 font-normal ml-1">(${q.language === 'ingles' ? 'Inglês' : 'Espanhol'})</span>`;
+                }
+
+                // Processamento do Contexto
+                let contextHtml = '';
+                if (q.context) {
+                    // O Tailwind whitespace-pre-wrap cuidará de quebras de linha
+                    contextHtml = `<p class="text-gray-800 dark:text-gray-200 mb-5 leading-relaxed whitespace-pre-wrap text-[15px] sm:text-base">${escapeHtml(q.context)}</p>`;
+                }
+                
+                // Imagens do Contexto
+                let filesHtml = '';
+                if (q.files && q.files.length > 0) {
+                    filesHtml = `<div class="mb-6 flex flex-col items-center gap-4 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-100 dark:border-gray-800">`;
+                    q.files.forEach(file => {
+                        filesHtml += `<img src="${file}" class="max-w-full h-auto rounded shadow-sm" alt="Imagem auxiliar da questão" loading="lazy">`;
+                    });
+                    filesHtml += `</div>`;
+                }
+
+                // Alternativas
+                let altsHtml = `<div class="space-y-3 mt-6">`;
+                if (q.alternatives && q.alternatives.length > 0) {
+                    q.alternatives.forEach(alt => {
+                        altsHtml += `
+                            <div onclick="selectAlternative(this)" class="alternative-item flex items-start p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition cursor-pointer select-none" data-letter="${alt.letter}">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 mr-4 letter-circle border border-gray-200 dark:border-gray-600 shadow-sm text-lg">
+                                    ${alt.letter}
+                                </div>
+                                <div class="flex-grow pt-1.5 text-gray-800 dark:text-gray-200 text-[15px] sm:text-base">
+                                    ${alt.text ? `<span class="whitespace-pre-wrap block">${escapeHtml(alt.text)}</span>` : ''}
+                                    ${alt.file ? `<img src="${alt.file}" class="mt-3 max-w-full h-auto rounded shadow-sm border border-gray-200 dark:border-gray-700" alt="Alternativa ${alt.letter}" loading="lazy">` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    altsHtml += `<div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-xl text-center border border-yellow-200 dark:border-yellow-800/50"><i class="fa-solid fa-circle-info mr-2"></i> Esta questão não possui alternativas cadastradas.</div>`;
+                }
+                altsHtml += `</div>`;
+
+                // Construção Final do Card
+                const card = document.createElement('article');
+                card.className = 'bg-white dark:bg-darkCard rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-800 fade-in';
+                // Adicionamos um delay progressivo para animação em cascata (max 10 itens para não bugar o css)
+                card.style.animationDelay = `${Math.min(index * 0.05, 0.5)}s`;
+                
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3 pb-4 border-b border-gray-100 dark:border-gray-800">
+                        <h3 class="text-xl font-extrabold text-gray-900 dark:text-white flex items-center">
+                            <i class="fa-solid fa-clipboard-question text-primary mr-2 opacity-80"></i>
+                            ${escapeHtml(q.title || `Questão ${q.index}`)}
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 flex items-center">
+                                <i class="fa-regular fa-calendar mr-1.5"></i> ${q.year}
+                            </span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold border ${badgeColor} flex items-center">
+                                ${badgeText}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-body">
+                        ${contextHtml}
+                        ${filesHtml}
+                    </div>
+                    
+                    ${altsHtml}
+                    
+                    <div class="mt-8 pt-5 border-t border-gray-100 dark:border-gray-800 flex justify-end">
+                        <button onclick="revealAnswer(this, '${q.correctAlternative || ''}')" class="bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-6 rounded-xl transition-all flex items-center shadow-sm">
+                            <i class="fa-solid fa-eye text-primary mr-2"></i> Validar Resposta
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Re-renderizar equações matemáticas caso existam no texto do ENEM
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err.message));
+            }
+        }
+
+        // Interação de Clique na Alternativa
+        window.selectAlternative = function(element) {
+            const card = element.closest('.fade-in');
+            // Se a resposta já foi revelada, desabilitar seleção
+            if (card.hasAttribute('data-revealed')) return;
+            
+            // Limpa seleções anteriores
+            const alts = card.querySelectorAll('.alternative-item');
+            alts.forEach(a => {
+                a.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
+                a.classList.add('border-gray-100', 'dark:border-gray-700/60');
+                a.removeAttribute('data-selected');
+                
+                const circle = a.querySelector('.letter-circle');
+                circle.classList.remove('bg-primary', 'text-white', 'border-primary');
+                circle.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+            });
+            
+            // Adiciona seleção na atual
+            element.classList.remove('border-gray-100', 'dark:border-gray-700/60');
+            element.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
+            element.setAttribute('data-selected', 'true');
+            
+            const circle = element.querySelector('.letter-circle');
+            circle.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+            circle.classList.add('bg-primary', 'text-white', 'border-primary');
+        };
+
+        // Revelar Gabarito
+        window.revealAnswer = function(btn, correctLetter) {
+            const card = btn.closest('.fade-in');
+            if (card.hasAttribute('data-revealed')) return;
+            
+            if (!correctLetter || correctLetter === 'undefined') {
+                btn.innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow-500 mr-2"></i> Gabarito Indisponível`;
+                btn.disabled = true;
+                btn.classList.add('cursor-not-allowed', 'opacity-80');
+                return;
+            }
+
+            card.setAttribute('data-revealed', 'true');
+            
+            const alts = card.querySelectorAll('.alternative-item');
+            let userSelectedCorrectly = false;
+            let hasSelection = false;
+            
+            alts.forEach(alt => {
+                const letter = alt.getAttribute('data-letter');
+                const circle = alt.querySelector('.letter-circle');
+                const isSelected = alt.hasAttribute('data-selected');
+                
+                if (isSelected) hasSelection = true;
+                
+                // Reseta classes visuais de hover/borda normal
+                alt.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20', 'hover:bg-gray-50', 'dark:hover:bg-gray-800/50', 'cursor-pointer');
+                alt.classList.add('cursor-default');
+                
+                if (letter === correctLetter) {
+                    // Certa
+                    alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
+                    alt.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
+                    
+                    circle.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300', 'bg-primary', 'border-primary');
+                    circle.classList.add('bg-green-500', 'text-white', 'border-green-500');
+                    circle.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    
+                    if (isSelected) userSelectedCorrectly = true;
+                } else if (isSelected) {
+                    // Errada Selecionada
+                    alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
+                    alt.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
+                    
+                    circle.classList.remove('bg-primary', 'text-white', 'border-primary');
+                    circle.classList.add('bg-red-500', 'text-white', 'border-red-500');
+                    circle.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                } else {
+                    // Outras
+                    alt.classList.add('opacity-40');
+                }
+            });
+            
+            // Feedback no Botão
+            btn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'bg-gray-50', 'dark:bg-gray-800');
+            if (!hasSelection) {
+                btn.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200', 'dark:bg-blue-900/30', 'dark:text-blue-300', 'dark:border-blue-800');
+                btn.innerHTML = `<i class="fa-solid fa-info-circle mr-2"></i> A resposta correta é ${correctLetter}`;
+            } else if (userSelectedCorrectly) {
+                btn.classList.add('bg-green-50', 'text-green-700', 'border-green-200', 'dark:bg-green-900/30', 'dark:text-green-300', 'dark:border-green-800');
+                btn.innerHTML = `<i class="fa-solid fa-face-smile-beam mr-2"></i> Você Acertou!`;
+            } else {
+                btn.classList.add('bg-red-50', 'text-red-700', 'border-red-200', 'dark:bg-red-900/30', 'dark:text-red-300', 'dark:border-red-800');
+                btn.innerHTML = `<i class="fa-solid fa-face-frown text-red-500 mr-2"></i> Você Errou. A resposta é ${correctLetter}`;
+            }
+            
             btn.disabled = true;
-        }
+            btn.classList.add('cursor-not-allowed');
+        };
 
-        function renderPagination() {
-            const t = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
-            const c = document.getElementById('pagination-container');
-            if (t <= 1) return c.innerHTML = '';
+        // Gerencia visibilidade do Loader vs Container
+        function showLoader(show) {
+            const loader = document.getElementById('loader');
+            const container = document.getElementById('questions-container');
+            const emptyState = document.getElementById('empty-state');
             
-            let h = `<div class="flex justify-center items-center gap-1.5 mt-2">`;
-            
-            const btnClass = "min-w-[32px] h-8 px-2 flex items-center justify-center rounded-md border border-ghBorder bg-ghBg text-ghText text-sm font-medium hover:bg-[#1f242c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
-            const activeClass = "min-w-[32px] h-8 px-2 flex items-center justify-center rounded-md border border-ghBlue bg-ghBlue text-white text-sm font-medium shadow-sm";
-            
-            h += `<button onclick="goPage(${state.currentPage - 1})" ${state.currentPage === 1 ? 'disabled' : ''} class="${btnClass}"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>`;
-            
-            let start = Math.max(1, state.currentPage - 2);
-            let end = Math.min(t, state.currentPage + 2);
-            
-            if (start > 1) {
-                h += `<button onclick="goPage(1)" class="${btnClass}">1</button>`;
-                if (start > 2) h += `<span class="px-1 text-ghMuted">...</span>`;
+            if (show) {
+                loader.classList.remove('hidden');
+                container.classList.add('hidden');
+                emptyState.classList.add('hidden');
+            } else {
+                loader.classList.add('hidden');
+                container.classList.remove('hidden');
             }
-            
-            for (let i = start; i <= end; i++) {
-                if (i === state.currentPage) h += `<button class="${activeClass}">${i}</button>`;
-                else h += `<button onclick="goPage(${i})" class="${btnClass}">${i}</button>`;
-            }
-            
-            if (end < t) {
-                if (end < t - 1) h += `<span class="px-1 text-ghMuted">...</span>`;
-                h += `<button onclick="goPage(${t})" class="${btnClass}">${t}</button>`;
-            }
-            
-            h += `<button onclick="goPage(${state.currentPage + 1})" ${state.currentPage === t ? 'disabled' : ''} class="${btnClass}"><i class="fa-solid fa-chevron-right text-[10px]"></i></button></div>`;
-            c.innerHTML = h;
-        }
-
-        window.goPage = function(p) {
-            const t = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
-            if (p < 1 || p > t) return;
-            state.currentPage = p;
-            renderQuestions();
-            document.getElementById('scroll-area').scrollTo({top: 0, behavior: 'smooth'});
         }
     </script>
 </body>
