@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENEM Hub | O Maior Banco de Questões do ENEM</title>
+    <title>ENEM Hub | Banco de Questões Inteligente</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Tailwind CSS with Typography Plugin for elegant text rendering -->
+    <!-- Tailwind CSS com plugin de Tipografia (para formatação elegante de artigos) -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
@@ -37,15 +37,12 @@
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- MathJax for Mathematical Equations -->
+    <!-- MathJax (Motor de equações matemáticas do ENEM) -->
     <script>
         window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            },
-            svg: {
-                fontCache: 'global'
-            }
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' },
+            startup: { typeset: false } // Nós vamos rodar manualmente após carregar as questões
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -53,7 +50,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* Custom Scrollbar */
+        /* Scrollbar Moderna */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         .dark ::-webkit-scrollbar-track { background: #0f172a; }
@@ -61,14 +58,14 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Animations */
+        /* Animações */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Skeletons */
+        /* Loading Skeletons */
         .skeleton {
             background-image: linear-gradient(90deg, #e2e8f0 0px, #f1f5f9 40px, #e2e8f0 80px);
             background-size: 200% 100%;
@@ -82,28 +79,24 @@
             100% { background-position: -200% 0; }
         }
 
-        /* Adjustments for Prose (Markdown Rendering) */
-        .prose p { margin-bottom: 1.25em; }
+        /* Configurações Avançadas de Imagens nas Questões */
         .prose img { 
-            border-radius: 0.5rem; 
-            margin-left: auto; 
-            margin-right: auto;
-            max-height: 400px;
+            border-radius: 0.75rem; 
+            margin: 1.5rem auto; 
+            max-height: 450px;
             object-fit: contain;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
-        .dark .prose img { border: 1px solid #334155; }
+        .dark .prose img { border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3); }
         
-        /* Card and Interactions */
         .alternative-item { transition: all 0.2s ease; }
         .letter-circle { transition: all 0.2s ease; }
-        
         select { outline: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-dark dark:text-gray-200 transition-colors duration-300 antialiased flex flex-col min-h-screen">
 
-    <!-- Navbar -->
+    <!-- Navegação -->
     <nav class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -123,28 +116,22 @@
         </div>
     </nav>
 
-    <!-- Header / Banner -->
+    <!-- Cabeçalho Principal -->
     <header class="bg-primary text-white py-12 relative overflow-hidden rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-7xl mt-6 shadow-xl hidden md:block">
         <div class="absolute inset-0 opacity-10 flex flex-wrap gap-12 justify-center items-center pointer-events-none text-6xl select-none">
-            <i class="fa-solid fa-calculator"></i>
-            <i class="fa-solid fa-flask"></i>
-            <i class="fa-solid fa-book"></i>
-            <i class="fa-solid fa-globe"></i>
-            <i class="fa-solid fa-atom"></i>
-            <i class="fa-solid fa-dna"></i>
-            <i class="fa-solid fa-chart-line"></i>
-            <i class="fa-solid fa-language"></i>
+            <i class="fa-solid fa-calculator"></i><i class="fa-solid fa-flask"></i><i class="fa-solid fa-book"></i>
+            <i class="fa-solid fa-globe"></i><i class="fa-solid fa-atom"></i><i class="fa-solid fa-dna"></i>
         </div>
         <div class="relative max-w-4xl mx-auto px-6 text-center z-10">
             <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">O Maior Banco de Questões do ENEM</h1>
-            <p class="text-lg md:text-xl text-blue-100 mb-0 font-light drop-shadow">Estude de forma gratuita com milhares de questões, gráficos e textos ricamente formatados.</p>
+            <p class="text-lg md:text-xl text-blue-100 mb-0 font-light drop-shadow">Textos, imagens e fórmulas complexas formatadas com perfeição. Pratique de graça.</p>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Conteúdo Central -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col md:flex-row gap-8">
         
-        <!-- Sidebar Filters -->
+        <!-- Barra Lateral (Filtros) -->
         <aside class="w-full md:w-80 flex-shrink-0">
             <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-24 transition-colors duration-300">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center border-b border-gray-100 dark:border-gray-700 pb-4">
@@ -202,9 +189,9 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fa-solid fa-magnifying-glass text-primary mr-1 w-5 text-center"></i> Conteúdo / Palavra-chave
+                            <i class="fa-solid fa-magnifying-glass text-primary mr-1 w-5 text-center"></i> Palavra-chave (Conteúdo)
                         </label>
-                        <input type="text" id="filter-keyword" placeholder="Ex: Vargas, Fotossíntese..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 transition-colors font-medium">
+                        <input type="text" id="filter-keyword" placeholder="Ex: Fotossíntese, Vargas..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 transition-colors font-medium">
                     </div>
 
                     <button id="btn-search" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center mt-4">
@@ -214,7 +201,7 @@
             </div>
         </aside>
 
-        <!-- Feed (Resultados) -->
+        <!-- Feed de Questões -->
         <section class="flex-grow min-w-0">
             <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-6 md:mt-0">
                 <div>
@@ -223,13 +210,13 @@
                 </div>
             </div>
 
-            <!-- Loader Progressivo -->
+            <!-- Loading Skeleton Otimizado -->
             <div id="loader" class="hidden flex-col items-center py-6 w-full fade-in">
                 <div class="text-center mb-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl w-full border border-blue-100 dark:border-blue-800/30">
                     <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-2" id="loader-text">
-                        <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API...
+                        <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Consultando a API Oficial...
                     </h3>
-                    <p class="text-blue-600 dark:text-blue-300 text-sm">Baixando dados e processando a formatação (textos, gráficos e equações)...</p>
+                    <p class="text-blue-600 dark:text-blue-300 text-sm">Respeitando os limites do servidor para baixar suas questões...</p>
                 </div>
                 
                 <div class="w-full space-y-6">
@@ -255,38 +242,31 @@
                 </div>
             </div>
 
-            <!-- Container das Questões -->
-            <div id="questions-container" class="space-y-8" data-loaded-year="">
-                <!-- As questões serão renderizadas aqui via JS -->
-            </div>
+            <div id="questions-container" class="space-y-8" data-loaded-year=""></div>
             
-            <!-- Estado Vazio -->
+            <!-- Sem Resultados -->
             <div id="empty-state" class="hidden text-center py-20 bg-white dark:bg-darkCard rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm mt-4">
                 <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50 dark:bg-gray-800 mb-6">
                     <i class="fa-solid fa-box-open text-3xl text-primary"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Nenhuma questão encontrada</h3>
-                <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Não encontramos nenhuma questão para os filtros selecionados. Tente alterar o ano, a área de conhecimento ou remova as palavras-chave.</p>
+                <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Não encontramos questões com esse filtro. Tente alterar a área de conhecimento ou a palavra-chave.</p>
             </div>
         </section>
     </main>
 
-    <!-- Botão Voltar ao Topo -->
+    <!-- Topo -->
     <button id="btn-top" class="fixed bottom-8 right-8 bg-primary hover:bg-blue-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl transition-all duration-300 opacity-0 invisible translate-y-4 z-50 text-xl">
         <i class="fa-solid fa-arrow-up"></i>
     </button>
 
-    <!-- Footer -->
     <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto py-10 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="flex items-center justify-center mb-4">
                 <i class="fa-solid fa-graduation-cap text-primary text-3xl mr-3"></i>
                 <span class="font-extrabold text-2xl text-gray-900 dark:text-white">ENEM<span class="text-primary">Hub</span></span>
             </div>
-            <p class="text-gray-500 dark:text-gray-400 mb-6 font-medium">Plataforma moderna para estudos e resolução de questões do ENEM.</p>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mt-6">
-                &copy; 2026 ENEM Hub.
-            </p>
+            <p class="text-sm text-gray-400 dark:text-gray-500 mt-6">&copy; 2026 ENEM Hub. Open Source Data.</p>
         </div>
     </footer>
 
@@ -295,11 +275,8 @@
         let currentYearData =[];
         let isFetching = false;
 
-        // Configurar o interpretador de Markdown
-        marked.setOptions({
-            breaks: true, // Quebra linhas onde tem Enter
-            gfm: true     // GitHub Flavored Markdown (Tabelas, listas, imagens)
-        });
+        // Configurando Markdown (Trata perfeitamente imagens ![]() e tabelas)
+        marked.setOptions({ breaks: true, gfm: true });
 
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
@@ -316,14 +293,9 @@
                 }
             });
 
-            document.getElementById('btn-top').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-
+            document.getElementById('btn-top').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
             document.getElementById('btn-search').addEventListener('click', triggerSearch);
-            document.getElementById('filter-keyword').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') triggerSearch();
-            });
+            document.getElementById('filter-keyword').addEventListener('keypress', (e) => { if (e.key === 'Enter') triggerSearch(); });
             
             document.getElementById('filter-discipline').addEventListener('change', (e) => {
                 const langContainer = document.getElementById('language-container');
@@ -340,47 +312,31 @@
         function initTheme() {
             const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             const icon = document.querySelector('#theme-toggle i');
-            
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                document.documentElement.classList.remove('dark');
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
+            if (isDark) { document.documentElement.classList.add('dark'); icon.classList.replace('fa-moon', 'fa-sun'); }
             
             document.getElementById('theme-toggle').addEventListener('click', () => {
                 document.documentElement.classList.toggle('dark');
                 const isNowDark = document.documentElement.classList.contains('dark');
                 localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
-                
-                if(isNowDark) {
-                    icon.classList.replace('fa-moon', 'fa-sun');
-                } else {
-                    icon.classList.replace('fa-sun', 'fa-moon');
-                }
+                isNowDark ? icon.classList.replace('fa-moon', 'fa-sun') : icon.classList.replace('fa-sun', 'fa-moon');
             });
         }
 
         async function loadFilters() {
             try {
                 const res = await fetch(`${API_BASE}/exams`);
-                if(!res.ok) throw new Error('Falha ao carregar provas');
                 const data = await res.json();
-                
-                let years =[...new Set(data.map(e => e.year))].sort((a, b) => b - a);
+                let years = [...new Set(data.map(e => e.year))].sort((a, b) => b - a);
                 populateYears(years);
             } catch (e) {
-                populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]);
+                populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017]);
             }
         }
 
         function populateYears(years) {
             const yearSelect = document.getElementById('filter-year');
             yearSelect.innerHTML = '';
-            years.forEach(y => {
-                yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
-            });
+            years.forEach(y => yearSelect.innerHTML += `<option value="${y}">${y}</option>`);
             if(years.length > 0) triggerSearch();
         }
 
@@ -388,17 +344,13 @@
             const year = document.getElementById('filter-year').value;
             const discipline = document.getElementById('filter-discipline').value;
             const language = document.getElementById('filter-language').value;
-            
             if(year) fetchAndRenderQuestions(year, discipline, language);
         }
 
         async function fetchAndRenderQuestions(year, discipline, language) {
             if(isFetching) return;
-            
             const container = document.getElementById('questions-container');
-            const currentLoadedYear = container.getAttribute('data-loaded-year');
-            
-            if (currentLoadedYear === year.toString() && currentYearData.length > 0) {
+            if (container.getAttribute('data-loaded-year') === year.toString() && currentYearData.length > 0) {
                 applyFiltersAndRender(discipline, language);
                 return;
             }
@@ -413,7 +365,7 @@
                 const loaderText = document.getElementById('loader-text');
                 
                 while(hasMore) {
-                    if (offset === 0) loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API...`;
+                    if (offset === 0) loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API Oficial...`;
 
                     const res = await fetch(`${API_BASE}/exams/${year}/questions?limit=50&offset=${offset}`);
                     if (!res.ok) throw new Error(`Status ${res.status}`);
@@ -430,27 +382,22 @@
                     
                     if (hasMore) {
                         offset += 50;
-                        await new Promise(resolve => setTimeout(resolve, 1200));
+                        await new Promise(resolve => setTimeout(resolve, 1100)); // Rate limit evasion
                     }
                 }
 
                 if (currentYearData.length === 0) throw new Error("A API não retornou questões.");
-
                 container.setAttribute('data-loaded-year', year);
                 applyFiltersAndRender(discipline, language);
                 
             } catch (e) {
-                console.error(e);
                 container.innerHTML = `
                     <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-8 rounded-2xl border border-red-200 dark:border-red-800/30 text-center fade-in shadow-sm">
                         <i class="fa-solid fa-triangle-exclamation text-5xl mb-5 opacity-90"></i>
-                        <h3 class="text-2xl font-bold mb-3">Não foi possível carregar as questões</h3>
-                        <p class="mb-6 max-w-lg mx-auto">Ocorreu um erro. Tente novamente em instantes.</p>
-                        <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md">
-                            <i class="fa-solid fa-rotate-right mr-2"></i> Tentar Novamente
-                        </button>
-                    </div>
-                `;
+                        <h3 class="text-2xl font-bold mb-3">Não foi possível carregar</h3>
+                        <p class="mb-6">Houve uma instabilidade na comunicação com a base do ENEM.</p>
+                        <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md">Tentar Novamente</button>
+                    </div>`;
                 container.setAttribute('data-loaded-year', '');
             } finally {
                 showLoader(false);
@@ -458,39 +405,48 @@
             }
         }
 
-        // Função responsável por juntar todos os pedaços da questão para garantir que NADA falte
-        function getCombinedQuestionText(q) {
-            const parts =[];
-            if (q.context) parts.push(q.context);       // Textos base e de apoio
-            if (q.text) parts.push(q.text);             // Corpo primário
-            if (q.body) parts.push(q.body);             // Variação de corpo
-            if (q.statement) parts.push(q.statement);   // Enunciado/declaração
-            if (q.question) parts.push(q.question);     // A pergunta em si
+        // Esta função garante que a Matemática (LaTeX) do ENEM não seja destruída pelo processador Markdown
+        function parseTextSafely(text) {
+            if (!text) return '';
+            const mathBlocks =[];
+            let processed = text;
             
-            return parts.join('\n\n'); // Junta tudo separando por parágrafos no Markdown
+            // Mascara equações isolando-as
+            const replacer = (match) => {
+                mathBlocks.push(match);
+                return `@@MATH_BLOCK_${mathBlocks.length - 1}@@`;
+            };
+
+            processed = processed.replace(/\$\$(.*?)\$\$/gs, replacer);
+            processed = processed.replace(/\\\[(.*?)\\\]/gs, replacer);
+            processed = processed.replace(/\$(.*?)\$/g, replacer);
+            processed = processed.replace(/\\\((.*?)\\\)/g, replacer);
+
+            // Roda o Markdown
+            let html = marked.parse(processed);
+
+            // Devolve as equações matemáticas para o HTML gerado
+            mathBlocks.forEach((block, index) => {
+                html = html.replace(`@@MATH_BLOCK_${index}@@`, block);
+            });
+
+            return html;
         }
 
         function applyFiltersAndRender(discipline, language) {
             const keyword = document.getElementById('filter-keyword').value.toLowerCase();
             let filtered = currentYearData;
             
-            if (discipline !== 'all') {
-                filtered = filtered.filter(q => q.discipline === discipline);
-            }
-            
+            if (discipline !== 'all') filtered = filtered.filter(q => q.discipline === discipline);
             if (discipline === 'all' || discipline === 'linguagens') {
-                if (language !== 'all') {
-                    filtered = filtered.filter(q => !q.language || q.language === language);
-                }
+                if (language !== 'all') filtered = filtered.filter(q => !q.language || q.language === language);
             }
             
             if (keyword.trim() !== '') {
                 filtered = filtered.filter(q => {
-                    const fullText = getCombinedQuestionText(q).toLowerCase();
-                    const titleText = (q.title || '').toLowerCase();
-                    const altText = (q.alternatives ||[]).map(a => a.text || '').join(' ').toLowerCase();
-                    
-                    return fullText.includes(keyword) || titleText.includes(keyword) || altText.includes(keyword);
+                    const textContent = `${q.context || ''} ${q.alternativesIntroduction || ''} ${q.title || ''}`.toLowerCase();
+                    const altContent = (q.alternatives ||[]).map(a => a.text || '').join(' ').toLowerCase();
+                    return textContent.includes(keyword) || altContent.includes(keyword);
                 });
             }
             
@@ -503,7 +459,6 @@
             const resultsCount = document.getElementById('results-count');
             
             container.innerHTML = '';
-            
             if (data.length === 0) {
                 emptyState.classList.remove('hidden');
                 resultsCount.innerText = `Nenhuma questão encontrada.`;
@@ -513,13 +468,7 @@
             emptyState.classList.add('hidden');
             resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões.`;
 
-            const discLabels = {
-                'ciencias-humanas': 'Ciências Humanas',
-                'ciencias-natureza': 'Ciências da Natureza',
-                'linguagens': 'Linguagens e Códigos',
-                'matematica': 'Matemática'
-            };
-            
+            const discLabels = { 'ciencias-humanas': 'Ciências Humanas', 'ciencias-natureza': 'Ciências da Natureza', 'linguagens': 'Linguagens e Códigos', 'matematica': 'Matemática' };
             const discColors = {
                 'ciencias-humanas': 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800/50',
                 'ciencias-natureza': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/50',
@@ -529,37 +478,47 @@
 
             data.forEach((q, index) => {
                 let badgeText = discLabels[q.discipline] || (q.discipline ? q.discipline.toUpperCase() : 'GERAL');
-                let badgeColor = discColors[q.discipline] || 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
+                let badgeColor = discColors[q.discipline] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+                if(q.language) badgeText += ` <span class="opacity-75 font-normal ml-1">(${q.language === 'ingles' ? 'Inglês' : 'Espanhol'})</span>`;
 
-                if(q.language) {
-                    badgeText += ` <span class="opacity-75 font-normal ml-1">(${q.language === 'ingles' ? 'Inglês' : 'Espanhol'})</span>`;
+                // Construção robusta do Corpo da Questão 
+                // Contexto (Base do texto, gráficos markdown)
+                let contextHtml = q.context ? `<div class="prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base mb-6 break-words">${parseTextSafely(q.context)}</div>` : '';
+                
+                // Imagens externas anexadas (quando a API separa imagens do texto)
+                let filesHtml = '';
+                if (q.files && q.files.length > 0) {
+                    filesHtml = `<div class="mb-6 flex flex-col items-center gap-4 bg-white dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700/60 shadow-sm">`;
+                    q.files.forEach(file => filesHtml += `<img src="${file}" class="max-w-full h-auto rounded" alt="Imagem auxiliar" loading="lazy">`);
+                    filesHtml += `</div>`;
                 }
+                
+                // Extra Text (Garantia para padrões passados da API)
+                let extraHtml = '';['text', 'statement', 'question', 'body'].forEach(field => {
+                    if (q[field]) extraHtml += `<div class="prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base mb-6">${parseTextSafely(q[field])}</div>`;
+                });
 
-                // Junta o texto inteiro e processa o Markdown para gerar HTML ricamente formatado (negrito, itálico, imagens, tabelas)
-                const fullMarkdownText = getCombinedQuestionText(q);
-                const processedHTML = marked.parse(fullMarkdownText);
+                // ENUNCIADO REAL: A API guarda a pergunta final no campo alternativesIntroduction
+                let statementHtml = q.alternativesIntroduction ? `<div class="prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base font-bold mb-6">${parseTextSafely(q.alternativesIntroduction)}</div>` : '';
 
-                // Alternativas
+                // Alternativas (Garante exibição mesmo se tiver imagem ou equação na alternativa)
                 let altsHtml = `<div class="space-y-3 mt-6">`;
                 if (q.alternatives && q.alternatives.length > 0) {
                     q.alternatives.forEach(alt => {
-                        // O texto da alternativa também pode conter markdown (ex: equações ou negrito)
-                        let altParsedHTML = alt.text ? marked.parse(alt.text) : '';
-                        
+                        let altParsedHTML = alt.text ? parseTextSafely(alt.text) : '';
                         altsHtml += `
                             <div onclick="selectAlternative(this)" class="alternative-item flex items-start p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition cursor-pointer select-none" data-letter="${alt.letter}">
-                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 mr-4 letter-circle border border-gray-200 dark:border-gray-600 shadow-sm text-lg mt-1">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 mr-4 letter-circle border border-gray-200 dark:border-gray-600 shadow-sm text-lg mt-0.5">
                                     ${alt.letter}
                                 </div>
-                                <div class="flex-grow text-gray-800 dark:text-gray-200 text-[15px] sm:text-base prose prose-slate prose-blue dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-normal prose-img:my-2 prose-img:max-h-48">
+                                <div class="flex-grow text-gray-800 dark:text-gray-200 text-[15px] sm:text-base prose prose-slate prose-blue dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-normal overflow-x-auto">
                                     ${altParsedHTML}
-                                    ${alt.file ? `<img src="${alt.file}" class="mt-3 max-w-full h-auto rounded shadow-sm border border-gray-200 dark:border-gray-700">` : ''}
+                                    ${alt.file ? `<img src="${alt.file}" class="${altParsedHTML ? 'mt-3' : ''} max-w-full h-auto rounded shadow-sm border border-gray-200 dark:border-gray-700" loading="lazy">` : ''}
                                 </div>
-                            </div>
-                        `;
+                            </div>`;
                     });
                 } else {
-                    altsHtml += `<div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-xl text-center border border-yellow-200 dark:border-yellow-800/50"><i class="fa-solid fa-circle-info mr-2"></i> Esta questão não possui alternativas cadastradas.</div>`;
+                    altsHtml += `<div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-xl text-center border border-yellow-200 dark:border-yellow-800/50">Esta questão não possui alternativas cadastradas.</div>`;
                 }
                 altsHtml += `</div>`;
 
@@ -567,7 +526,6 @@
                 card.className = 'bg-white dark:bg-darkCard rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-800 fade-in';
                 card.style.animationDelay = `${Math.min(index * 0.05, 0.5)}s`;
                 
-                // Usando a classe 'prose' do Tailwind para embelezar o HTML gerado pelo Markdown
                 card.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3 pb-4 border-b border-gray-100 dark:border-gray-800">
                         <h3 class="text-xl font-extrabold text-gray-900 dark:text-white flex items-center">
@@ -575,32 +533,27 @@
                             ${q.title || `Questão ${q.index}`}
                         </h3>
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 flex items-center">
-                                <i class="fa-regular fa-calendar mr-1.5"></i> ${q.year}
-                            </span>
-                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold border ${badgeColor} flex items-center">
-                                ${badgeText}
-                            </span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"><i class="fa-regular fa-calendar mr-1"></i> ${q.year}</span>
+                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold border ${badgeColor}">${badgeText}</span>
                         </div>
                     </div>
-                    
-                    <div class="question-body prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base">
-                        ${processedHTML}
+                    <div class="question-content overflow-x-auto">
+                        ${contextHtml}
+                        ${filesHtml}
+                        ${extraHtml}
+                        ${statementHtml}
                     </div>
-                    
                     ${altsHtml}
-                    
                     <div class="mt-8 pt-5 border-t border-gray-100 dark:border-gray-800 flex justify-end">
                         <button onclick="revealAnswer(this, '${q.correctAlternative || ''}')" class="bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-6 rounded-xl transition-all flex items-center shadow-sm">
                             <i class="fa-solid fa-eye text-primary mr-2"></i> Validar Resposta
                         </button>
-                    </div>
-                `;
+                    </div>`;
                 container.appendChild(card);
             });
 
-            // Processa as equações matemáticas (MathJax) depois de injetar o HTML
-            if (window.MathJax) {
+            // Dispara o MathJax para processar a matemática depois que tudo for colocado na tela
+            if (window.MathJax && window.MathJax.typesetPromise) {
                 MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err.message));
             }
         }
@@ -614,7 +567,6 @@
                 a.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
                 a.classList.add('border-gray-100', 'dark:border-gray-700/60');
                 a.removeAttribute('data-selected');
-                
                 const circle = a.querySelector('.letter-circle');
                 circle.classList.remove('bg-primary', 'text-white', 'border-primary');
                 circle.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
@@ -632,16 +584,12 @@
         window.revealAnswer = function(btn, correctLetter) {
             const card = btn.closest('.fade-in');
             if (card.hasAttribute('data-revealed')) return;
-            
             if (!correctLetter || correctLetter === 'undefined') {
                 btn.innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow-500 mr-2"></i> Gabarito Indisponível`;
-                btn.disabled = true;
-                btn.classList.add('cursor-not-allowed', 'opacity-80');
-                return;
+                btn.disabled = true; return;
             }
 
             card.setAttribute('data-revealed', 'true');
-            
             const alts = card.querySelectorAll('.alternative-item');
             let userSelectedCorrectly = false;
             let hasSelection = false;
@@ -650,7 +598,6 @@
                 const letter = alt.getAttribute('data-letter');
                 const circle = alt.querySelector('.letter-circle');
                 const isSelected = alt.hasAttribute('data-selected');
-                
                 if (isSelected) hasSelection = true;
                 
                 alt.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20', 'hover:bg-gray-50', 'dark:hover:bg-gray-800/50', 'cursor-pointer');
@@ -659,18 +606,13 @@
                 if (letter === correctLetter) {
                     alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
                     alt.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-                    
-                    circle.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300', 'bg-primary', 'border-primary');
-                    circle.classList.add('bg-green-500', 'text-white', 'border-green-500');
+                    circle.className = 'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4 letter-circle text-lg mt-0.5 bg-green-500 text-white border-green-500 shadow-sm';
                     circle.innerHTML = '<i class="fa-solid fa-check"></i>';
-                    
                     if (isSelected) userSelectedCorrectly = true;
                 } else if (isSelected) {
                     alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
                     alt.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
-                    
-                    circle.classList.remove('bg-primary', 'text-white', 'border-primary');
-                    circle.classList.add('bg-red-500', 'text-white', 'border-red-500');
+                    circle.className = 'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4 letter-circle text-lg mt-0.5 bg-red-500 text-white border-red-500 shadow-sm';
                     circle.innerHTML = '<i class="fa-solid fa-xmark"></i>';
                 } else {
                     alt.classList.add('opacity-40');
@@ -679,16 +621,15 @@
             
             btn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'bg-gray-50', 'dark:bg-gray-800');
             if (!hasSelection) {
-                btn.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200', 'dark:bg-blue-900/30', 'dark:text-blue-300', 'dark:border-blue-800');
+                btn.className += ' bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800';
                 btn.innerHTML = `<i class="fa-solid fa-info-circle mr-2"></i> A resposta correta é ${correctLetter}`;
             } else if (userSelectedCorrectly) {
-                btn.classList.add('bg-green-50', 'text-green-700', 'border-green-200', 'dark:bg-green-900/30', 'dark:text-green-300', 'dark:border-green-800');
+                btn.className += ' bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800';
                 btn.innerHTML = `<i class="fa-solid fa-face-smile-beam mr-2"></i> Você Acertou!`;
             } else {
-                btn.classList.add('bg-red-50', 'text-red-700', 'border-red-200', 'dark:bg-red-900/30', 'dark:text-red-300', 'dark:border-red-800');
-                btn.innerHTML = `<i class="fa-solid fa-face-frown text-red-500 mr-2"></i> Você Errou. A resposta é ${correctLetter}`;
+                btn.className += ' bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800';
+                btn.innerHTML = `<i class="fa-solid fa-face-frown text-red-500 mr-2"></i> Errado! Resposta: ${correctLetter}`;
             }
-            
             btn.disabled = true;
             btn.classList.add('cursor-not-allowed');
         };
@@ -697,16 +638,11 @@
             const loader = document.getElementById('loader');
             const container = document.getElementById('questions-container');
             const emptyState = document.getElementById('empty-state');
-            
             if (show) {
-                loader.classList.remove('hidden');
-                loader.classList.add('flex');
-                container.classList.add('hidden');
-                emptyState.classList.add('hidden');
+                loader.classList.remove('hidden'); loader.classList.add('flex');
+                container.classList.add('hidden'); emptyState.classList.add('hidden');
             } else {
-                loader.classList.add('hidden');
-                loader.classList.remove('flex');
-                container.classList.remove('hidden');
+                loader.classList.add('hidden'); loader.classList.remove('flex'); container.classList.remove('hidden');
             }
         }
     </script>
