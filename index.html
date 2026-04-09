@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco de Questões ENEM</title>
+    <title>Banco de Questões ENEM MAX</title>
     
-    <!-- Tailwind CSS (via CDN - Ideal para arquivos HTML únicos) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -18,7 +18,7 @@
                         darkCard: '#1e293b'
                     },
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        sans:['Inter', 'system-ui', 'sans-serif'],
                     }
                 }
             }
@@ -28,11 +28,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- MathJax para fórmulas matemáticas avançadas -->
+    <!-- MathJax (Para equações matemáticas do ENEM) -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* Custom Scrollbar */
+        /* Scrollbar Elegante */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -48,44 +48,84 @@
             background: #475569;
         }
 
-        /* Classes para revelar o gabarito de forma animada */
+        /* Radio Buttons Customizados (Puramente CSS) */
+        .options-container input[type="radio"] {
+            appearance: none;
+            background-color: #f8fafc;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.25em;
+            height: 1.25em;
+            border: 0.15em solid #cbd5e1;
+            border-radius: 50%;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .options-container input[type="radio"]::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #2563eb;
+        }
+        .options-container input[type="radio"]:checked {
+            border-color: #2563eb;
+        }
+        .options-container input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+        .dark .options-container input[type="radio"] {
+            background-color: #1e293b;
+            border-color: #475569;
+        }
+        .dark .options-container input[type="radio"]:checked {
+            border-color: #3b82f6;
+        }
+        .dark .options-container input[type="radio"]::before {
+            box-shadow: inset 1em 1em #3b82f6;
+        }
+
+        /* Classes de Revelação de Gabarito */
         .show-results .correct-option {
-            background-color: #d1fae5 !important;
+            background-color: #ecfdf5 !important;
             border-color: #10b981 !important;
         }
         .dark .show-results .correct-option {
-            background-color: rgba(16, 185, 129, 0.15) !important;
+            background-color: rgba(16, 185, 129, 0.1) !important;
             border-color: #059669 !important;
         }
-        .show-results .correct-option span.option-text,
-        .show-results .correct-option span.option-letter {
+        .show-results .correct-option .option-text,
+        .show-results .correct-option .option-letter {
             color: #065f46 !important;
-            font-weight: bold;
+            font-weight: 600;
         }
-        .dark .show-results .correct-option span.option-text,
-        .dark .show-results .correct-option span.option-letter {
+        .dark .show-results .correct-option .option-text,
+        .dark .show-results .correct-option .option-letter {
             color: #34d399 !important;
-            font-weight: bold;
         }
         
         .show-results .wrong-selected {
-            background-color: #fee2e2 !important;
+            background-color: #fef2f2 !important;
             border-color: #ef4444 !important;
         }
         .dark .show-results .wrong-selected {
-            background-color: rgba(239, 68, 68, 0.15) !important;
+            background-color: rgba(239, 68, 68, 0.1) !important;
             border-color: #b91c1c !important;
         }
-        .show-results .wrong-selected span.option-text,
-        .show-results .wrong-selected span.option-letter {
+        .show-results .wrong-selected .option-text,
+        .show-results .wrong-selected .option-letter {
             color: #991b1b !important;
         }
-        .dark .show-results .wrong-selected span.option-text,
-        .dark .show-results .wrong-selected span.option-letter {
+        .dark .show-results .wrong-selected .option-text,
+        .dark .show-results .wrong-selected .option-letter {
             color: #f87171 !important;
         }
 
-        /* Checkbox Customizado nos Filtros */
         .checkbox-custom:checked + div {
             background-color: #3b82f6;
             border-color: #3b82f6;
@@ -97,32 +137,31 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-100 h-screen overflow-hidden flex transition-colors duration-300">
 
-    <!-- Fundo de sobreposição para mobile -->
     <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity lg:hidden"></div>
 
-    <!-- Sidebar (Filtros) -->
+    <!-- Sidebar de Filtros -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-darkCard shadow-xl transform -translate-x-full transition-transform duration-300 lg:relative lg:translate-x-0 flex flex-col h-full border-r border-gray-200 dark:border-gray-800">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-3">
-                <i class="fa-solid fa-graduation-cap"></i> ENEM Data
+        <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800/50">
+            <h1 class="text-xl font-black text-blue-600 dark:text-blue-400 flex items-center gap-3">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i> ENEM Max
             </h1>
-            <button id="close-sidebar" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-xl">
+            <button id="close-sidebar" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 text-xl">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
         <div class="p-6 flex-1 overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                <h2 class="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2 uppercase tracking-wide">
                     <i class="fa-solid fa-filter text-blue-500"></i> Filtros
                 </h2>
-                <button id="clear-filters" class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium hidden">
+                <button id="clear-filters" class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 font-bold hidden px-2 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-lg transition-colors">
                     Limpar
                 </button>
             </div>
             
             <div class="mb-8">
-                <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3"><i class="fa-regular fa-calendar mr-1"></i> Ano de Aplicação</h3>
+                <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3"><i class="fa-regular fa-calendar mr-1"></i> Ano</h3>
                 <div id="filter-years" class="space-y-2">
                     <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
                     <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
@@ -130,70 +169,65 @@
             </div>
             
             <div class="mb-6">
-                <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3"><i class="fa-solid fa-book-open mr-1"></i> Área do Conhecimento</h3>
+                <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3"><i class="fa-solid fa-book-open mr-1"></i> Matéria</h3>
                 <div id="filter-disciplines" class="space-y-2">
                     <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
                     <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                    <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
                 </div>
             </div>
         </div>
         
         <div class="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-            <div class="text-xs text-center text-gray-500 dark:text-gray-400">
-                <i class="fa-solid fa-server mr-1"></i> Dados integrados de fontes abertas (GitHub, api.enem.dev).
+            <div class="text-[10px] text-center text-gray-400 dark:text-gray-500 font-medium">
+                <i class="fa-solid fa-shield-check mr-1 text-green-500"></i> Bypass CORS Habilitado.
             </div>
         </div>
     </aside>
 
-    <!-- Conteúdo Principal -->
+    <!-- Conteúdo Central -->
     <main class="flex-1 flex flex-col h-full min-w-0">
-        <!-- Header -->
         <header class="bg-white dark:bg-darkCard shadow-sm z-10 px-4 sm:px-6 py-4 flex justify-between items-center transition-colors duration-300 border-b border-gray-200 dark:border-gray-800">
             <div class="flex items-center gap-4 w-full">
-                <button id="menu-toggle" class="lg:hidden text-gray-500 dark:text-gray-400 hover:text-blue-600 focus:outline-none text-xl transition-colors">
+                <button id="menu-toggle" class="lg:hidden text-gray-500 hover:text-blue-600 focus:outline-none text-xl">
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 
                 <div class="relative w-full max-w-2xl">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 dark:text-gray-500">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                         <i class="fa-solid fa-search"></i>
                     </span>
-                    <input type="text" id="search-input" placeholder="Pesquisar no enunciado ou contexto da questão..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all text-sm font-medium">
+                    <input type="text" id="search-input" placeholder="Pesquisar termo na questão..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-medium">
                 </div>
             </div>
             
             <div class="flex items-center ml-4 shrink-0">
-                <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-lg" aria-label="Alternar tema">
+                <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-lg" aria-label="Alternar tema">
                     <i class="fa-solid fa-moon"></i>
                 </button>
             </div>
         </header>
 
-        <!-- Barra de Status e Paginação Global -->
-        <div class="bg-gray-100 dark:bg-slate-800/50 px-6 py-2 flex justify-between items-center text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-800">
-            <span id="results-stats">Carregando banco de dados...</span>
-            <span id="source-status" class="flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> Conectando às bases
+        <div class="bg-blue-50 dark:bg-blue-900/20 px-6 py-2.5 flex justify-between items-center text-xs font-semibold text-blue-800 dark:text-blue-300 border-b border-blue-100 dark:border-blue-800/50">
+            <span id="results-stats">Carregando dados...</span>
+            <span id="source-status" class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Testando rotas CORS...
             </span>
         </div>
 
-        <!-- Área Central (Onde as Questões Aparecem) -->
-        <div class="flex-1 overflow-y-auto p-4 sm:p-6" id="scroll-area">
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 dark:bg-[#0b1120]" id="scroll-area">
             <div id="questions-container" class="max-w-4xl mx-auto pb-10">
-                <!-- Estado de Carregamento (Skeleton) -->
+                <!-- Esqueletos de Carregamento -->
                 <div class="animate-pulse space-y-6">
                     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6">
                         <div class="flex gap-2 mb-4">
-                            <div class="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                            <div class="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                            <div class="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                            <div class="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
                         </div>
                         <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-3"></div>
                         <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-8"></div>
                         <div class="space-y-3">
-                            <div class="h-12 bg-gray-100 dark:bg-slate-800 rounded-lg w-full"></div>
-                            <div class="h-12 bg-gray-100 dark:bg-slate-800 rounded-lg w-full"></div>
-                            <div class="h-12 bg-gray-100 dark:bg-slate-800 rounded-lg w-full"></div>
+                            <div class="h-14 bg-gray-100 dark:bg-slate-800/50 rounded-xl w-full border border-gray-200 dark:border-gray-700"></div>
+                            <div class="h-14 bg-gray-100 dark:bg-slate-800/50 rounded-xl w-full border border-gray-200 dark:border-gray-700"></div>
                         </div>
                     </div>
                 </div>
@@ -203,16 +237,11 @@
         </div>
     </main>
 
-    <!-- Lógica de Negócios e UI -->
     <script>
         const state = {
             questions: [],
             filteredQuestions:[],
-            filters: {
-                year: [],
-                discipline:[],
-                search: ''
-            },
+            filters: { year: [], discipline:[], search: '' },
             currentPage: 1,
             itemsPerPage: 10,
             loading: true,
@@ -226,27 +255,24 @@
         });
 
         function initTheme() {
-            const themeToggle = document.getElementById('theme-toggle');
+            const toggle = document.getElementById('theme-toggle');
             const html = document.documentElement;
             const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             
             if (isDark) {
                 html.classList.add('dark');
-                themeToggle.innerHTML = '<i class="fa-solid fa-sun text-yellow-400"></i>';
-            } else {
-                html.classList.remove('dark');
-                themeToggle.innerHTML = '<i class="fa-solid fa-moon text-gray-500"></i>';
+                toggle.innerHTML = '<i class="fa-solid fa-sun text-yellow-400"></i>';
             }
 
-            themeToggle.addEventListener('click', () => {
+            toggle.addEventListener('click', () => {
                 if (html.classList.contains('dark')) {
                     html.classList.remove('dark');
                     localStorage.setItem('theme', 'light');
-                    themeToggle.innerHTML = '<i class="fa-solid fa-moon text-gray-500"></i>';
+                    toggle.innerHTML = '<i class="fa-solid fa-moon text-gray-500"></i>';
                 } else {
                     html.classList.add('dark');
                     localStorage.setItem('theme', 'dark');
-                    themeToggle.innerHTML = '<i class="fa-solid fa-sun text-yellow-400"></i>';
+                    toggle.innerHTML = '<i class="fa-solid fa-sun text-yellow-400"></i>';
                 }
             });
         }
@@ -254,21 +280,14 @@
         function setupEventListeners() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-overlay');
-            const toggleBtn = document.getElementById('menu-toggle');
-            const closeBtn = document.getElementById('close-sidebar');
 
-            function toggleSidebar() {
-                if (sidebar.classList.contains('-translate-x-full')) {
-                    sidebar.classList.remove('-translate-x-full');
-                    overlay.classList.remove('hidden');
-                } else {
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
-                }
-            }
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            };
 
-            toggleBtn.addEventListener('click', toggleSidebar);
-            closeBtn.addEventListener('click', toggleSidebar);
+            document.getElementById('menu-toggle').addEventListener('click', toggleSidebar);
+            document.getElementById('close-sidebar').addEventListener('click', toggleSidebar);
             overlay.addEventListener('click', toggleSidebar);
 
             document.getElementById('search-input').addEventListener('input', (e) => {
@@ -286,226 +305,226 @@
             });
         }
 
-        // ==========================================
-        // FETCH & NORMALIZAÇÃO DOS DADOS
-        // ==========================================
+        // =========================================================
+        // MOTOR BLINDADO DE FETCH (Bypass CORS, origin=null e 429)
+        // =========================================================
         async function loadExternalData() {
-            // Fontes estritamente confiáveis que não possuem erros de CORS
-            const sources =[
-                { url: 'https://raw.githubusercontent.com/viniciusarruda/llm-enem/main/dataset/enem/enem_2022_0_shot.json', year: 2022 },
-                { url: 'https://api.enem.dev/v1/exams/2023/questions?limit=40', year: 2023 },
-                { url: 'https://api.enem.dev/v1/exams/2022/questions?limit=40', year: 2022 },
-                { url: 'https://api.enem.dev/v1/exams/2021/questions?limit=40', year: 2021 },
-                { url: 'https://api.enem.dev/v1/exams/2019/questions?limit=40', year: 2019 }
+            // Estratégia de Múltiplos CDNs e Proxies CORS em Paralelo
+            // Isso garante que se um arquivo falhar por rate limit do Github ou CORS do SandBox, os outros preencherão a tela.
+            const datasets =[
+                // 1. JSDelivr: Perfeito para contornar origin="null". Retorna cabeçalho CORS aberto (*).
+                { url: 'https://cdn.jsdelivr.net/gh/viniciusarruda/llm-enem@main/dataset/enem/enem_2022_0_shot.json', type: 'json', year: 2022 },
+                // 2. AllOrigins Proxy encapsulando API pública do ENEM. Retorna o payload em um JSON seguro.
+                { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.enem.dev/v1/exams/2023/questions?limit=50'), type: 'json', year: 2023 },
+                // 3. AllOrigins Proxy encapsulando JSONL de Repositório do HuggingFace (Garante bypass do erro 429 local)
+                { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://huggingface.co/datasets/maritaca-ai/enem/resolve/main/2023.jsonl'), type: 'jsonl', year: 2023 },
+                // 4. Fallback direto do Github Raw (Caso os Proxies fiquem offline, o Github salva).
+                { url: 'https://raw.githubusercontent.com/viniciusarruda/llm-enem/main/dataset/enem/enem_2022_3_shot.json', type: 'json', year: 2022 }
             ];
 
             let allQuestions =[];
             const parsedSignatures = new Set();
 
-            for (const src of sources) {
+            // Dispara todos ao mesmo tempo. O que sobreviver aos firewalls alimenta o banco.
+            const fetchPromises = datasets.map(async (src) => {
                 try {
-                    const response = await fetch(src.url);
-                    if (!response.ok) continue;
-
-                    let json = await response.json();
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 12000); // 12s limite
                     
+                    const response = await fetch(src.url, { signal: controller.signal });
+                    clearTimeout(timeout);
+                    
+                    if (!response.ok) throw new Error(`Status ${response.status}`);
+
                     let rawItems =[];
-                    // Adaptando as estruturas possíveis (Array direto ou dentro de um objeto)
-                    if (Array.isArray(json)) {
-                        rawItems = json;
-                    } else if (json && Array.isArray(json.data)) {
-                        rawItems = json.data;
-                    } else if (json && Array.isArray(json.questions)) {
-                        rawItems = json.questions;
-                    } else if (typeof json === 'object') {
-                        rawItems = Object.values(json);
+                    if (src.type === 'jsonl') {
+                        const text = await response.text();
+                        rawItems = text.split('\n').map(l => l.trim()).filter(l => l.startsWith('{')).map(l => JSON.parse(l));
+                    } else {
+                        const json = await response.json();
+                        // Adaptação dinâmica ao corpo de resposta
+                        if (Array.isArray(json)) rawItems = json;
+                        else if (json.data && Array.isArray(json.data)) rawItems = json.data;
+                        else if (json.questions && Array.isArray(json.questions)) rawItems = json.questions;
+                        else if (json.contents) rawItems = JSON.parse(json.contents); // Caso um proxy faça envelopamento duplo
                     }
 
-                    const normalized = normalizeData(rawItems, src.year);
-                    
-                    // Verifica duplicatas comparando o texto do enunciado (signature)
-                    normalized.forEach(q => {
-                        const sig = q.question.substring(0, 60).trim().toLowerCase();
-                        if (!parsedSignatures.has(sig) && q.question.length > 10) {
-                            parsedSignatures.add(sig);
+                    return normalizeData(rawItems, src.year);
+                } catch (err) {
+                    console.warn(`[Ignorado] Rota indisponível (${src.url}):`, err.message);
+                    return[];
+                }
+            });
+
+            // Aguarda todas as requisições terminarem (com sucesso ou falha)
+            const results = await Promise.allSettled(fetchPromises);
+
+            results.forEach(res => {
+                if (res.status === 'fulfilled' && res.value.length > 0) {
+                    res.value.forEach(q => {
+                        // Proteção contra questões duplicadas de bases diferentes
+                        const signature = q.question.substring(0, 60).trim().toLowerCase();
+                        if (!parsedSignatures.has(signature)) {
+                            parsedSignatures.add(signature);
                             allQuestions.push(q);
                         }
                     });
-
-                } catch (err) {
-                    console.warn(`[Aviso] Falha ao carregar a fonte: ${src.url}`, err);
                 }
-            }
+            });
 
             state.loading = false;
 
             if (allQuestions.length === 0) {
-                state.error = "Nenhuma questão pôde ser carregada. Por favor, verifique a sua conexão com a internet ou firewall.";
+                state.error = "Nenhuma API respondeu. É possível que sua rede corporativa esteja bloqueando todas as saídas externas (Strict CSP). Tente usar uma aba comum do navegador fora de firewalls rigorosos.";
             } else {
                 state.questions = allQuestions;
                 state.filteredQuestions = [...allQuestions];
                 extractAndRenderFilters(allQuestions);
                 
                 const statusEl = document.getElementById('source-status');
-                statusEl.innerHTML = `<i class="fa-solid fa-check-circle text-green-500"></i> ${allQuestions.length} questões disponíveis`;
-                statusEl.classList.remove('text-blue-600', 'dark:text-blue-400');
-                statusEl.classList.add('text-green-600', 'dark:text-green-400');
+                statusEl.innerHTML = `<i class="fa-solid fa-check-double text-green-500"></i> Sistema Online (${allQuestions.length} questões na memória cache)`;
+                statusEl.classList.replace('text-blue-800', 'text-green-800');
+                statusEl.classList.replace('dark:text-blue-300', 'dark:text-green-400');
             }
 
             renderQuestions();
         }
 
-        // Transforma o JSON de diferentes formatos para um formato padrão interno
+        // Normalizador Inteligente (Pega qualquer formato de JSON e transforma em Padrão)
         function normalizeData(items, defaultYear) {
-            return items.map((item) => {
-                let options =[];
-                
-                // Formato api.enem.dev
-                if (Array.isArray(item.alternatives) && item.alternatives.length > 0 && item.alternatives[0].text) {
-                    options = item.alternatives.map((a, i) => ({
-                        letter: a.letter ? a.letter.toUpperCase() : String.fromCharCode(65 + i),
-                        text: a.text || a.body || '',
-                        isCorrect: a.isCorrect === true || a.is_correct === true || item.answer === a.letter || item.correct === a.letter
-                    }));
-                } 
-                // Formato viniciusarruda/llm-enem (Chaves A, B, C, D, E)
-                else {['A', 'B', 'C', 'D', 'E'].forEach((l, i) => {
-                        const text = item[l] || item[l.toLowerCase()];
-                        if (text) {
-                            options.push({
-                                letter: l,
-                                text: text,
-                                isCorrect: (item.answer === l || item.correct === l || item.gabarito === l || item.label === i)
-                            });
-                        }
-                    });
-                }
+            return items.map(item => {
+                try {
+                    let options = [];
+                    
+                    if (Array.isArray(item.alternatives) && item.alternatives[0]?.text) {
+                        options = item.alternatives.map((a, i) => ({
+                            letter: a.letter || String.fromCharCode(65 + i),
+                            text: a.text || a.body,
+                            isCorrect: a.isCorrect === true || a.is_correct === true || item.answer === a.letter
+                        }));
+                    } else if (Array.isArray(item.options)) {
+                        options = item.options.map((opt, i) => ({
+                            letter: String.fromCharCode(65 + i),
+                            text: opt,
+                            isCorrect: (item.answer === i || item.answer === String.fromCharCode(65 + i) || item.answer === opt)
+                        }));
+                    } else {['A', 'B', 'C', 'D', 'E'].forEach((l, i) => {
+                            const txt = item[l] || item[l.toLowerCase()];
+                            if (txt) {
+                                options.push({
+                                    letter: l,
+                                    text: txt,
+                                    isCorrect: (item.answer === l || item.correct === l || item.gabarito === l || item.label === i)
+                                });
+                            }
+                        });
+                    }
 
-                let disciplineRaw = item.discipline || item.subject || item.area || item.materia || 'Conhecimentos Gerais';
-                let questionRaw = item.question || item.statement || item.enunciado || item.text_pt || item.text || item.body || '';
-                let contextRaw = item.context || item.support_text || item.texto || item.intro || '';
+                    const disc = item.discipline || item.subject || item.area || 'Conhecimentos Gerais';
+                    const qText = item.question || item.statement || item.enunciado || item.text || '';
+                    const ctx = item.context || item.support_text || item.texto || item.intro || '';
 
-                return {
-                    id: item.id || item.uuid || `q-${Math.random().toString(36).substr(2, 9)}`,
-                    year: item.year || item.ano || defaultYear,
-                    discipline: formatDiscipline(disciplineRaw),
-                    context: contextRaw,
-                    question: questionRaw,
-                    alternatives: options
-                };
-            }).filter(q => q.alternatives && q.alternatives.length >= 2 && q.question.length > 5);
+                    return {
+                        id: `q-${Math.random().toString(36).substr(2, 9)}`,
+                        year: item.year || item.ano || defaultYear,
+                        discipline: formatDiscipline(disc),
+                        context: ctx,
+                        question: qText,
+                        alternatives: options
+                    };
+                } catch(e) { return null; }
+            }).filter(q => q && q.alternatives.length >= 2 && q.question.length > 5);
         }
 
         function formatDiscipline(disc) {
-            if (!disc) return 'Conhecimentos Gerais';
-            const lower = String(disc).toLowerCase();
-            if (lower.includes('humana') || lower.includes('history') || lower.includes('geography') || lower.includes('philosophy') || lower.includes('sociology')) return 'Ciências Humanas';
-            if (lower.includes('natureza') || lower.includes('biology') || lower.includes('physics') || lower.includes('chemistry')) return 'Ciências da Natureza';
-            if (lower.includes('linguagem') || lower.includes('portuguese') || lower.includes('english') || lower.includes('spanish') || lower.includes('art')) return 'Linguagens e Códigos';
-            if (lower.includes('matemática') || lower.includes('matematica') || lower.includes('math')) return 'Matemática';
+            const l = String(disc).toLowerCase();
+            if (l.includes('humana') || l.includes('history')) return 'Ciências Humanas';
+            if (l.includes('natureza') || l.includes('biology') || l.includes('physics')) return 'Ciências da Natureza';
+            if (l.includes('linguagem') || l.includes('portuguese') || l.includes('english')) return 'Linguagens';
+            if (l.includes('matemática') || l.includes('math')) return 'Matemática';
             return 'Conhecimentos Gerais';
         }
 
         function getDisciplineStyles(disc) {
             switch(disc) {
-                case 'Ciências Humanas': return { icon: 'fa-globe', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' };
-                case 'Ciências da Natureza': return { icon: 'fa-leaf', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' };
-                case 'Linguagens e Códigos': return { icon: 'fa-language', color: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300' };
-                case 'Matemática': return { icon: 'fa-calculator', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' };
-                default: return { icon: 'fa-book', color: 'bg-gray-100 text-gray-800 dark:bg-slate-700 dark:text-gray-300' };
+                case 'Ciências Humanas': return { icon: 'fa-landmark', color: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800/50' };
+                case 'Ciências da Natureza': return { icon: 'fa-flask', color: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/50' };
+                case 'Linguagens': return { icon: 'fa-language', color: 'bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-800/50' };
+                case 'Matemática': return { icon: 'fa-square-root-variable', color: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/50' };
+                default: return { icon: 'fa-book', color: 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:border-gray-600' };
             }
         }
 
-        // ==========================================
-        // RENDERIZAÇÃO DA INTERFACE
-        // ==========================================
+        // =========================================================
+        // LÓGICA DE UI E FILTROS
+        // =========================================================
         function extractAndRenderFilters(data) {
-            const years = new Set();
-            const disciplines = new Set();
+            const years = new Set(), disciplines = new Set();
+            data.forEach(q => { years.add(q.year); disciplines.add(q.discipline); });
 
-            data.forEach(q => {
-                if (q.year) years.add(q.year);
-                if (q.discipline) disciplines.add(q.discipline);
-            });
+            const yArr = Array.from(years).sort((a,b) => b - a);
+            const dArr = Array.from(disciplines).sort();
 
-            const yearsArr = Array.from(years).sort((a,b) => b - a);
-            const discArr = Array.from(disciplines).sort();
-
-            const yContainer = document.getElementById('filter-years');
-            const dContainer = document.getElementById('filter-disciplines');
-
-            yContainer.innerHTML = yearsArr.map(y => `
-                <label class="flex items-center cursor-pointer group">
-                    <div class="relative flex items-center justify-center w-5 h-5 mr-3 border-2 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 transition-colors group-hover:border-blue-500">
+            document.getElementById('filter-years').innerHTML = yArr.map(y => `
+                <label class="flex items-center cursor-pointer group py-1">
+                    <div class="relative flex items-center justify-center w-5 h-5 mr-3 border-2 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-slate-800 group-hover:border-blue-500 transition-colors">
                         <input type="checkbox" value="${y}" class="filter-checkbox filter-year opacity-0 absolute w-full h-full cursor-pointer checkbox-custom">
-                        <div class="w-full h-full rounded pointer-events-none flex items-center justify-center transition-colors">
-                            <i class="fa-solid fa-check text-white text-xs hidden"></i>
+                        <div class="w-full h-full rounded flex items-center justify-center pointer-events-none transition-colors">
+                            <i class="fa-solid fa-check text-white text-[10px] hidden"></i>
                         </div>
                     </div>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">${y}</span>
-                </label>
-            `).join('');
+                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${y}</span>
+                </label>`).join('');
 
-            dContainer.innerHTML = discArr.map(d => {
-                const style = getDisciplineStyles(d);
+            document.getElementById('filter-disciplines').innerHTML = dArr.map(d => {
+                const s = getDisciplineStyles(d);
                 return `
-                <label class="flex items-center cursor-pointer group">
-                    <div class="relative flex items-center justify-center w-5 h-5 mr-3 border-2 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 transition-colors group-hover:border-blue-500">
+                <label class="flex items-center cursor-pointer group py-1">
+                    <div class="relative flex items-center justify-center w-5 h-5 mr-3 border-2 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-slate-800 group-hover:border-blue-500 transition-colors">
                         <input type="checkbox" value="${d}" class="filter-checkbox filter-discipline opacity-0 absolute w-full h-full cursor-pointer checkbox-custom">
-                        <div class="w-full h-full rounded pointer-events-none flex items-center justify-center transition-colors">
-                            <i class="fa-solid fa-check text-white text-xs hidden"></i>
+                        <div class="w-full h-full rounded flex items-center justify-center pointer-events-none transition-colors">
+                            <i class="fa-solid fa-check text-white text-[10px] hidden"></i>
                         </div>
                     </div>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <i class="fa-solid ${style.icon} opacity-60"></i> ${d}
+                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                        <i class="fa-solid ${s.icon} opacity-50 w-4 text-center"></i> ${d}
                     </span>
-                </label>
-            `}).join('');
+                </label>`}).join('');
 
             document.querySelectorAll('.filter-checkbox').forEach(cb => {
                 cb.addEventListener('change', () => {
                     const yearCbs = document.querySelectorAll('.filter-year:checked');
                     const discCbs = document.querySelectorAll('.filter-discipline:checked');
-                    
                     state.filters.year = Array.from(yearCbs).map(c => String(c.value));
                     state.filters.discipline = Array.from(discCbs).map(c => c.value);
                     state.currentPage = 1;
                     
                     const clearBtn = document.getElementById('clear-filters');
-                    if(state.filters.year.length || state.filters.discipline.length || state.filters.search) {
-                        clearBtn.classList.remove('hidden');
-                    } else {
-                        clearBtn.classList.add('hidden');
-                    }
-                    
+                    (state.filters.year.length || state.filters.discipline.length || state.filters.search) 
+                        ? clearBtn.classList.remove('hidden') 
+                        : clearBtn.classList.add('hidden');
+                        
                     applyFilters();
                 });
             });
         }
 
         function applyFilters() {
+            const s = state.filters.search;
             state.filteredQuestions = state.questions.filter(q => {
-                const matchYear = state.filters.year.length === 0 || state.filters.year.includes(String(q.year));
-                const matchDisc = state.filters.discipline.length === 0 || state.filters.discipline.includes(q.discipline);
-                const searchLower = state.filters.search;
-                const matchSearch = searchLower === '' || 
-                                    q.question.toLowerCase().includes(searchLower) || 
-                                    q.context.toLowerCase().includes(searchLower);
-                                    
-                return matchYear && matchDisc && matchSearch;
+                const yMatch = !state.filters.year.length || state.filters.year.includes(String(q.year));
+                const dMatch = !state.filters.discipline.length || state.filters.discipline.includes(q.discipline);
+                const sMatch = !s || q.question.toLowerCase().includes(s) || q.context.toLowerCase().includes(s);
+                return yMatch && dMatch && sMatch;
             });
             renderQuestions();
         }
 
         function formatText(text) {
             if (!text) return '';
-            // Preserva HTML original caso a API já forneça formatado (<p>, <b>, etc)
-            if (text.includes('<p>') || text.includes('<br>') || text.includes('<b>')) {
-                return text;
-            }
-            // Caso contrário converte linebreaks para <br>
-            let encoded = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return encoded.replace(/\n/g, '<br>');
+            let s = String(text);
+            if (s.includes('<p>') || s.includes('<br>')) return s; // Já está formatado em HTML nativo
+            return s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
         }
 
         function renderQuestions() {
@@ -514,170 +533,153 @@
 
             if (state.error) {
                 container.innerHTML = `
-                    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 text-center">
+                    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-2xl p-8 text-center shadow-sm">
                         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/50 mb-4 text-red-500 text-2xl">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <i class="fa-solid fa-shield-cat"></i>
                         </div>
-                        <h2 class="text-xl font-bold text-red-700 dark:text-red-400 mb-2">Erro de Conexão</h2>
-                        <p class="text-red-600 dark:text-red-300 max-w-md mx-auto">${state.error}</p>
+                        <h2 class="text-xl font-bold text-red-700 dark:text-red-400 mb-2">Bloqueio de Ambiente Detectado</h2>
+                        <p class="text-red-600 dark:text-red-300 max-w-md mx-auto text-sm">${state.error}</p>
                     </div>`;
                 return;
             }
 
-            if (state.loading) return; 
-
-            if (state.filteredQuestions.length === 0) {
-                stats.innerText = '0 resultados';
+            if (state.filteredQuestions.length === 0 && !state.loading) {
+                stats.innerText = '0 questões';
                 container.innerHTML = `
-                    <div class="bg-white dark:bg-darkCard border border-gray-200 dark:border-gray-800 rounded-xl p-12 text-center shadow-sm">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4 text-gray-400 text-2xl">
-                            <i class="fa-solid fa-search"></i>
+                    <div class="bg-white dark:bg-darkCard border border-gray-200 dark:border-gray-800 rounded-2xl p-12 text-center shadow-sm">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-800 mb-4 text-gray-400 text-2xl">
+                            <i class="fa-solid fa-ghost"></i>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Nenhuma questão encontrada</h2>
-                        <p class="text-gray-500 dark:text-gray-400">Tente ajustar seus filtros ou remover o termo de pesquisa.</p>
+                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Sem resultados</h2>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Nenhuma questão corresponde a estes filtros.</p>
                     </div>`;
-                renderPagination();
+                document.getElementById('pagination-container').innerHTML = '';
                 return;
             }
 
             const total = state.filteredQuestions.length;
             const startIdx = (state.currentPage - 1) * state.itemsPerPage;
             const endIdx = startIdx + state.itemsPerPage;
-            const currentSlice = state.filteredQuestions.slice(startIdx, endIdx);
+            const slice = state.filteredQuestions.slice(startIdx, endIdx);
 
-            stats.innerHTML = `Mostrando <span class="font-bold text-gray-800 dark:text-white">${startIdx + 1}-${Math.min(endIdx, total)}</span> de <span class="font-bold text-gray-800 dark:text-white">${total}</span> questões`;
+            stats.innerHTML = `Mostrando <strong class="text-blue-900 dark:text-blue-200">${startIdx + 1}-${Math.min(endIdx, total)}</strong> de <strong class="text-blue-900 dark:text-blue-200">${total}</strong>`;
 
-            let html = '';
-            currentSlice.forEach((q) => {
-                const style = getDisciplineStyles(q.discipline);
-                let hasValidCorrectFlag = q.alternatives.some(a => a.isCorrect);
+            container.innerHTML = slice.map(q => {
+                const s = getDisciplineStyles(q.discipline);
+                const fallbackCorrect = q.alternatives.some(a=>a.isCorrect) ? false : true; // Evita quebrar se banco de dados não possuir resposta
                 
-                html += `
-                <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 sm:p-7 mb-6 transition-all hover:shadow-md">
-                    <div class="flex flex-wrap items-center justify-between mb-5 gap-3">
+                return `
+                <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-6 hover:shadow-md transition-shadow">
+                    <div class="flex flex-wrap items-center justify-between mb-6 gap-3">
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1.5 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-xs font-bold uppercase tracking-wider rounded-lg flex items-center gap-1.5 border border-blue-100 dark:border-blue-800/50">
-                                <i class="fa-regular fa-calendar"></i> ENEM ${q.year}
+                            <span class="px-3 py-1.5 bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-xs font-bold uppercase tracking-wider rounded-lg flex items-center gap-1.5">
+                                <i class="fa-regular fa-calendar-check"></i> ENEM ${q.year}
                             </span>
-                            <span class="px-3 py-1.5 ${style.color} text-xs font-bold uppercase tracking-wider rounded-lg flex items-center gap-1.5 border border-transparent">
-                                <i class="fa-solid ${style.icon}"></i> ${q.discipline}
+                            <span class="px-3 py-1.5 ${s.color} border text-xs font-bold uppercase tracking-wider rounded-lg flex items-center gap-1.5">
+                                <i class="fa-solid ${s.icon}"></i> ${q.discipline}
                             </span>
                         </div>
-                        <span class="text-xs font-mono text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded">Ref: ${String(q.id).substring(0,8)}</span>
                     </div>
                     
-                    <div class="prose dark:prose-invert max-w-none mb-6 text-gray-900 dark:text-gray-100">
-                        ${q.context ? `<div class="mb-5 text-sm sm:text-base text-gray-600 dark:text-gray-300 border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic leading-relaxed break-words">${formatText(q.context)}</div>` : ''}
-                        <div class="font-semibold text-base sm:text-lg leading-relaxed mb-6 break-words">${formatText(q.question)}</div>
+                    <div class="prose dark:prose-invert max-w-none mb-8 text-gray-800 dark:text-gray-100">
+                        ${q.context ? `<div class="mb-5 text-sm sm:text-base text-gray-600 dark:text-gray-400 border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-1 italic leading-relaxed break-words">${formatText(q.context)}</div>` : ''}
+                        <div class="font-semibold text-base sm:text-[1.1rem] leading-relaxed break-words text-justify">${formatText(q.question)}</div>
                     </div>
                     
-                    <div class="space-y-3 mb-6 options-container" data-question-id="${q.id}">
-                        ${q.alternatives.map((alt, aIdx) => `
-                            <label class="flex items-start p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer transition-colors w-full ${alt.isCorrect || (!hasValidCorrectFlag && aIdx===0) ? 'correct-option hidden-correct' : 'wrong-option'}">
-                                <div class="flex items-center h-6 shrink-0">
-                                    <input type="radio" name="q-${q.id}" value="${alt.letter}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <div class="space-y-3 mb-6 options-container" data-id="${q.id}">
+                        ${q.alternatives.map((alt, i) => `
+                            <label class="flex items-start p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors w-full ${(alt.isCorrect || (fallbackCorrect && i===0)) ? 'correct-option' : 'wrong-option'}">
+                                <div class="flex items-center mt-0.5 shrink-0">
+                                    <input type="radio" name="r-${q.id}" value="${alt.letter}">
                                 </div>
-                                <div class="ml-3 flex-1 text-sm sm:text-base leading-relaxed break-words">
-                                    <span class="font-bold mr-2 text-gray-800 dark:text-gray-200 option-letter">${alt.letter})</span>
+                                <div class="ml-4 flex-1 text-sm sm:text-base leading-relaxed break-words">
+                                    <span class="font-black mr-2 text-gray-900 dark:text-white option-letter">${alt.letter}.</span>
                                     <span class="text-gray-700 dark:text-gray-300 option-text">${formatText(alt.text)}</span>
                                 </div>
                             </label>
                         `).join('')}
                     </div>
                     
-                    <div class="flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-5 mt-2">
-                        <div class="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
-                            <i class="fa-solid fa-shield-halved"></i> Resolução Oficial
+                    <div class="flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-6 mt-4">
+                        <div class="text-xs text-gray-400 flex items-center gap-2 font-medium">
+                            <i class="fa-solid fa-code-commit"></i> API Ref: ${q.id.substring(0,6)}
                         </div>
-                        <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors text-sm flex items-center gap-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900" onclick="revealAnswer('${q.id}')">
-                            <i class="fa-solid fa-eye"></i> Revelar Gabarito
+                        <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all text-sm flex items-center gap-2 shadow-sm focus:ring-4 focus:ring-blue-500/30" onclick="revealAnswer('${q.id}', this)">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Revelar Gabarito
                         </button>
                     </div>
                 </div>`;
-            });
+            }).join('');
 
-            container.innerHTML = html;
             renderPagination();
 
-            // Renderiza as Fórmulas Matemáticas do MathJax
+            // Re-renderizar Fórmulas via MathJax
             if (window.MathJax && window.MathJax.typesetPromise) {
-                MathJax.typesetPromise([container]).catch((err) => console.log(err.message));
+                MathJax.typesetPromise([container]).catch(err => console.log('MathJax:', err.message));
             }
         }
 
-        window.revealAnswer = function(qId) {
-            const container = document.querySelector(`.options-container[data-question-id="${qId}"]`);
+        window.revealAnswer = function(id, btn) {
+            const container = document.querySelector(`.options-container[data-id="${id}"]`);
             if (!container) return;
             
             container.classList.add('show-results');
             
-            const selectedInput = container.querySelector('input[type="radio"]:checked');
-            if (selectedInput) {
-                const label = selectedInput.closest('label');
+            const selected = container.querySelector('input[type="radio"]:checked');
+            if (selected) {
+                const label = selected.closest('label');
                 if (!label.classList.contains('correct-option')) {
                     label.classList.add('wrong-selected');
                 }
             }
             
-            container.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+            container.querySelectorAll('input').forEach(r => r.disabled = true);
             
-            const btn = container.parentElement.querySelector('button');
-            if(btn) {
-                btn.innerHTML = `<i class="fa-solid fa-check"></i> Gabarito Revelado`;
-                btn.classList.replace('bg-blue-600', 'bg-gray-400');
-                btn.classList.replace('hover:bg-blue-700', 'hover:bg-gray-500');
-                btn.classList.add('dark:bg-slate-700', 'dark:text-gray-300');
-                btn.disabled = true;
-                btn.style.cursor = 'default';
-            }
+            btn.innerHTML = `<i class="fa-solid fa-check-double"></i> Resolvido`;
+            btn.className = "px-5 py-2.5 bg-gray-200 dark:bg-slate-700 text-gray-500 dark:text-gray-400 rounded-xl font-bold text-sm flex items-center gap-2 cursor-default";
+            btn.disabled = true;
         }
 
         function renderPagination() {
-            const totalPages = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
-            const container = document.getElementById('pagination-container');
+            const total = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
+            const c = document.getElementById('pagination-container');
+            if (total <= 1) return c.innerHTML = '';
             
-            if (totalPages <= 1) {
-                container.innerHTML = '';
-                return;
-            }
+            let h = `<div class="flex justify-center items-center gap-2">`;
             
-            let html = `<div class="flex justify-center items-center gap-2">`;
-            const prevDisabled = state.currentPage === 1;
-            html += `<button onclick="changePage(${state.currentPage - 1})" ${prevDisabled ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-lg border ${prevDisabled ? 'border-gray-200 text-gray-400 dark:border-gray-800 dark:text-gray-600 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800'} transition-colors"><i class="fa-solid fa-chevron-left"></i></button>`;
+            h += `<button onclick="goPage(${state.currentPage - 1})" ${state.currentPage === 1 ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl border ${state.currentPage === 1 ? 'border-gray-200 text-gray-400 dark:border-gray-800 dark:text-gray-600 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800'} transition-colors"><i class="fa-solid fa-angle-left"></i></button>`;
             
             let start = Math.max(1, state.currentPage - 2);
-            let end = Math.min(totalPages, state.currentPage + 2);
+            let end = Math.min(total, state.currentPage + 2);
             
             if (start > 1) {
-                html += `<button onclick="changePage(1)" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 transition-colors font-medium">1</button>`;
-                if (start > 2) html += `<span class="px-2 text-gray-400 dark:text-gray-600">...</span>`;
+                h += `<button onclick="goPage(1)" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 font-bold transition-colors">1</button>`;
+                if (start > 2) h += `<span class="px-1 text-gray-400">...</span>`;
             }
             
             for (let i = start; i <= end; i++) {
                 if (i === state.currentPage) {
-                    html += `<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-blue-600 bg-blue-600 text-white font-bold shadow-sm">${i}</button>`;
+                    h += `<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-600 text-white font-black shadow-sm ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-[#0b1120]">${i}</button>`;
                 } else {
-                    html += `<button onclick="changePage(${i})" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 transition-colors font-medium">${i}</button>`;
+                    h += `<button onclick="goPage(${i})" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 font-bold transition-colors">${i}</button>`;
                 }
             }
             
-            if (end < totalPages) {
-                if (end < totalPages - 1) html += `<span class="px-2 text-gray-400 dark:text-gray-600">...</span>`;
-                html += `<button onclick="changePage(${totalPages})" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 transition-colors font-medium">${totalPages}</button>`;
+            if (end < total) {
+                if (end < total - 1) h += `<span class="px-1 text-gray-400">...</span>`;
+                h += `<button onclick="goPage(${total})" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 font-bold transition-colors">${total}</button>`;
             }
             
-            const nextDisabled = state.currentPage === totalPages;
-            html += `<button onclick="changePage(${state.currentPage + 1})" ${nextDisabled ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-lg border ${nextDisabled ? 'border-gray-200 text-gray-400 dark:border-gray-800 dark:text-gray-600 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800'} transition-colors"><i class="fa-solid fa-chevron-right"></i></button></div>`;
-            
-            container.innerHTML = html;
+            h += `<button onclick="goPage(${state.currentPage + 1})" ${state.currentPage === total ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl border ${state.currentPage === total ? 'border-gray-200 text-gray-400 dark:border-gray-800 dark:text-gray-600 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800'} transition-colors"><i class="fa-solid fa-angle-right"></i></button></div>`;
+            c.innerHTML = h;
         }
 
-        window.changePage = function(page) {
-            const totalPages = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
-            if (page < 1 || page > totalPages) return;
-            state.currentPage = page;
+        window.goPage = function(p) {
+            const t = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
+            if (p < 1 || p > t) return;
+            state.currentPage = p;
             renderQuestions();
-            document.getElementById('scroll-area').scrollTop = 0;
+            document.getElementById('scroll-area').scrollTo({top: 0, behavior: 'smooth'});
         }
     </script>
 </body>
