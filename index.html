@@ -13,8 +13,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS with Typography Plugin for elegant text rendering -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -27,18 +27,21 @@
                         darkCard: '#1e293b'
                     },
                     fontFamily: {
-                        sans:['Inter', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <!-- MathJax for Mathematical Equations -->
     <script>
         window.MathJax = {
             tex: {
-                inlineMath: [['$', '$'],['\\(', '\\)']]
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
             },
             svg: {
                 fontCache: 'global'
@@ -79,11 +82,22 @@
             100% { background-position: -200% 0; }
         }
 
+        /* Adjustments for Prose (Markdown Rendering) */
+        .prose p { margin-bottom: 1.25em; }
+        .prose img { 
+            border-radius: 0.5rem; 
+            margin-left: auto; 
+            margin-right: auto;
+            max-height: 400px;
+            object-fit: contain;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .dark .prose img { border: 1px solid #334155; }
+        
         /* Card and Interactions */
         .alternative-item { transition: all 0.2s ease; }
         .letter-circle { transition: all 0.2s ease; }
         
-        /* Select Reset */
         select { outline: none; }
     </style>
 </head>
@@ -123,7 +137,7 @@
         </div>
         <div class="relative max-w-4xl mx-auto px-6 text-center z-10">
             <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">O Maior Banco de Questões do ENEM</h1>
-            <p class="text-lg md:text-xl text-blue-100 mb-0 font-light drop-shadow">Estude de forma gratuita com milhares de questões das provas anteriores, atualizadas dinamicamente.</p>
+            <p class="text-lg md:text-xl text-blue-100 mb-0 font-light drop-shadow">Estude de forma gratuita com milhares de questões, gráficos e textos ricamente formatados.</p>
         </div>
     </header>
 
@@ -138,8 +152,6 @@
                 </h2>
                 
                 <div class="space-y-6">
-                    
-                    <!-- Ano -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-regular fa-calendar text-primary mr-1 w-5 text-center"></i> Ano da Prova
@@ -154,7 +166,6 @@
                         </div>
                     </div>
                     
-                    <!-- Matéria -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-solid fa-book-open text-primary mr-1 w-5 text-center"></i> Área de Conhecimento
@@ -173,7 +184,6 @@
                         </div>
                     </div>
 
-                    <!-- Idioma -->
                     <div id="language-container">
                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-solid fa-language text-primary mr-1 w-5 text-center"></i> Idioma (Linguagens)
@@ -190,15 +200,13 @@
                         </div>
                     </div>
 
-                    <!-- Conteúdo (Keyword) -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-solid fa-magnifying-glass text-primary mr-1 w-5 text-center"></i> Conteúdo / Palavra-chave
                         </label>
-                        <input type="text" id="filter-keyword" placeholder="Ex: Vargas, Fotossíntese, Logaritmo..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 transition-colors font-medium">
+                        <input type="text" id="filter-keyword" placeholder="Ex: Vargas, Fotossíntese..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 transition-colors font-medium">
                     </div>
 
-                    <!-- Botão Buscar -->
                     <button id="btn-search" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center mt-4">
                         <i class="fa-solid fa-search mr-2"></i> Buscar Questões
                     </button>
@@ -215,13 +223,13 @@
                 </div>
             </div>
 
-            <!-- Loader Progressivo (Skeleton) -->
+            <!-- Loader Progressivo -->
             <div id="loader" class="hidden flex-col items-center py-6 w-full fade-in">
                 <div class="text-center mb-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl w-full border border-blue-100 dark:border-blue-800/30">
                     <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-2" id="loader-text">
                         <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API...
                     </h3>
-                    <p class="text-blue-600 dark:text-blue-300 text-sm">Estamos baixando as questões com cuidado para respeitar os limites do servidor. Por favor, aguarde.</p>
+                    <p class="text-blue-600 dark:text-blue-300 text-sm">Baixando dados e processando a formatação (textos, gráficos e equações)...</p>
                 </div>
                 
                 <div class="w-full space-y-6">
@@ -252,7 +260,7 @@
                 <!-- As questões serão renderizadas aqui via JS -->
             </div>
             
-            <!-- Estado Vazio (Sem resultados) -->
+            <!-- Estado Vazio -->
             <div id="empty-state" class="hidden text-center py-20 bg-white dark:bg-darkCard rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm mt-4">
                 <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50 dark:bg-gray-800 mb-6">
                     <i class="fa-solid fa-box-open text-3xl text-primary"></i>
@@ -277,17 +285,21 @@
             </div>
             <p class="text-gray-500 dark:text-gray-400 mb-6 font-medium">Plataforma moderna para estudos e resolução de questões do ENEM.</p>
             <p class="text-sm text-gray-400 dark:text-gray-500 mt-6">
-                &copy; 2026 ENEM Hub. <br class="sm:hidden">
-                Dados puxados de repositórios Open Source e APIs Públicas.
+                &copy; 2026 ENEM Hub.
             </p>
         </div>
     </footer>
 
-    <!-- Aplicação JavaScript -->
     <script>
         const API_BASE = 'https://api.enem.dev/v1';
         let currentYearData =[];
         let isFetching = false;
+
+        // Configurar o interpretador de Markdown
+        marked.setOptions({
+            breaks: true, // Quebra linhas onde tem Enter
+            gfm: true     // GitHub Flavored Markdown (Tabelas, listas, imagens)
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
@@ -351,18 +363,14 @@
         }
 
         async function loadFilters() {
-            const yearSelect = document.getElementById('filter-year');
             try {
                 const res = await fetch(`${API_BASE}/exams`);
-                if(!res.ok) throw new Error('Falha ao carregar provas da API');
+                if(!res.ok) throw new Error('Falha ao carregar provas');
                 const data = await res.json();
                 
                 let years =[...new Set(data.map(e => e.year))].sort((a, b) => b - a);
-                if (years.length === 0) throw new Error('Nenhum ano encontrado');
-                
                 populateYears(years);
             } catch (e) {
-                console.warn("Erro ao buscar filtros. Usando fallback de anos.", e);
                 populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]);
             }
         }
@@ -373,10 +381,7 @@
             years.forEach(y => {
                 yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
             });
-            
-            if(years.length > 0) {
-                triggerSearch();
-            }
+            if(years.length > 0) triggerSearch();
         }
 
         function triggerSearch() {
@@ -384,9 +389,7 @@
             const discipline = document.getElementById('filter-discipline').value;
             const language = document.getElementById('filter-language').value;
             
-            if(year) {
-                fetchAndRenderQuestions(year, discipline, language);
-            }
+            if(year) fetchAndRenderQuestions(year, discipline, language);
         }
 
         async function fetchAndRenderQuestions(year, discipline, language) {
@@ -395,7 +398,6 @@
             const container = document.getElementById('questions-container');
             const currentLoadedYear = container.getAttribute('data-loaded-year');
             
-            // Reutiliza cache do mesmo ano sem bater na API
             if (currentLoadedYear === year.toString() && currentYearData.length > 0) {
                 applyFiltersAndRender(discipline, language);
                 return;
@@ -410,18 +412,11 @@
                 let hasMore = true;
                 const loaderText = document.getElementById('loader-text');
                 
-                // Sistema de Paginação para evitar Rate Limit e Erro 400 (Limite Muito Alto)
                 while(hasMore) {
-                    if (offset === 0) {
-                        loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API...`;
-                    }
+                    if (offset === 0) loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API...`;
 
-                    // Limite seguro de 50 previne erros 400 do servidor
                     const res = await fetch(`${API_BASE}/exams/${year}/questions?limit=50&offset=${offset}`);
-                    if (!res.ok) {
-                        const err = await res.text();
-                        throw new Error(`A API negou a requisição (${res.status}). Detalhes: ${err}`);
-                    }
+                    if (!res.ok) throw new Error(`Status ${res.status}`);
                     
                     const data = await res.json();
                     const pageQuestions = data.questions || data.data || (Array.isArray(data) ? data :[]);
@@ -431,33 +426,27 @@
                     loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Baixando questões... (${currentYearData.length}/${total})`;
                     
                     hasMore = data.hasMore || (data.metadata && data.metadata.hasMore);
-                    
-                    if (hasMore === undefined) {
-                        hasMore = pageQuestions.length >= 50; 
-                    }
+                    if (hasMore === undefined) hasMore = pageQuestions.length >= 50; 
                     
                     if (hasMore) {
                         offset += 50;
-                        // Delay de 1200ms para respeitar o Rate Limit rígido de 1 requisição/s da API
                         await new Promise(resolve => setTimeout(resolve, 1200));
                     }
                 }
 
-                if (currentYearData.length === 0) {
-                    throw new Error("A API não retornou nenhuma questão para este ano.");
-                }
+                if (currentYearData.length === 0) throw new Error("A API não retornou questões.");
 
                 container.setAttribute('data-loaded-year', year);
                 applyFiltersAndRender(discipline, language);
                 
             } catch (e) {
-                console.error("Erro na busca das questões:", e);
+                console.error(e);
                 container.innerHTML = `
                     <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-8 rounded-2xl border border-red-200 dark:border-red-800/30 text-center fade-in shadow-sm">
                         <i class="fa-solid fa-triangle-exclamation text-5xl mb-5 opacity-90"></i>
-                        <h3 class="text-2xl font-bold mb-3 text-red-700 dark:text-red-300">Não foi possível carregar as questões</h3>
-                        <p class="mb-6 max-w-lg mx-auto text-red-600/80 dark:text-red-400/80">Ocorreu um erro na conexão: ${e.message}</p>
-                        <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md">
+                        <h3 class="text-2xl font-bold mb-3">Não foi possível carregar as questões</h3>
+                        <p class="mb-6 max-w-lg mx-auto">Ocorreu um erro. Tente novamente em instantes.</p>
+                        <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md">
                             <i class="fa-solid fa-rotate-right mr-2"></i> Tentar Novamente
                         </button>
                     </div>
@@ -467,6 +456,18 @@
                 showLoader(false);
                 isFetching = false;
             }
+        }
+
+        // Função responsável por juntar todos os pedaços da questão para garantir que NADA falte
+        function getCombinedQuestionText(q) {
+            const parts =[];
+            if (q.context) parts.push(q.context);       // Textos base e de apoio
+            if (q.text) parts.push(q.text);             // Corpo primário
+            if (q.body) parts.push(q.body);             // Variação de corpo
+            if (q.statement) parts.push(q.statement);   // Enunciado/declaração
+            if (q.question) parts.push(q.question);     // A pergunta em si
+            
+            return parts.join('\n\n'); // Junta tudo separando por parágrafos no Markdown
         }
 
         function applyFiltersAndRender(discipline, language) {
@@ -485,25 +486,15 @@
             
             if (keyword.trim() !== '') {
                 filtered = filtered.filter(q => {
-                    const contextText = (q.context || '').toLowerCase();
+                    const fullText = getCombinedQuestionText(q).toLowerCase();
                     const titleText = (q.title || '').toLowerCase();
                     const altText = (q.alternatives ||[]).map(a => a.text || '').join(' ').toLowerCase();
                     
-                    return contextText.includes(keyword) || titleText.includes(keyword) || altText.includes(keyword);
+                    return fullText.includes(keyword) || titleText.includes(keyword) || altText.includes(keyword);
                 });
             }
             
             renderQuestionsHTML(filtered);
-        }
-
-        function escapeHtml(unsafe) {
-            if (!unsafe) return '';
-            return unsafe
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
         }
 
         function renderQuestionsHTML(data) {
@@ -520,7 +511,7 @@
             }
             
             emptyState.classList.add('hidden');
-            resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões encontradas.`;
+            resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões.`;
 
             const discLabels = {
                 'ciencias-humanas': 'Ciências Humanas',
@@ -544,31 +535,25 @@
                     badgeText += ` <span class="opacity-75 font-normal ml-1">(${q.language === 'ingles' ? 'Inglês' : 'Espanhol'})</span>`;
                 }
 
-                let contextHtml = '';
-                if (q.context) {
-                    contextHtml = `<p class="text-gray-800 dark:text-gray-200 mb-5 leading-relaxed whitespace-pre-wrap text-[15px] sm:text-base">${escapeHtml(q.context)}</p>`;
-                }
-                
-                let filesHtml = '';
-                if (q.files && q.files.length > 0) {
-                    filesHtml = `<div class="mb-6 flex flex-col items-center gap-4 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-100 dark:border-gray-800">`;
-                    q.files.forEach(file => {
-                        filesHtml += `<img src="${file}" class="max-w-full h-auto rounded shadow-sm" alt="Imagem auxiliar da questão" loading="lazy">`;
-                    });
-                    filesHtml += `</div>`;
-                }
+                // Junta o texto inteiro e processa o Markdown para gerar HTML ricamente formatado (negrito, itálico, imagens, tabelas)
+                const fullMarkdownText = getCombinedQuestionText(q);
+                const processedHTML = marked.parse(fullMarkdownText);
 
+                // Alternativas
                 let altsHtml = `<div class="space-y-3 mt-6">`;
                 if (q.alternatives && q.alternatives.length > 0) {
                     q.alternatives.forEach(alt => {
+                        // O texto da alternativa também pode conter markdown (ex: equações ou negrito)
+                        let altParsedHTML = alt.text ? marked.parse(alt.text) : '';
+                        
                         altsHtml += `
                             <div onclick="selectAlternative(this)" class="alternative-item flex items-start p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition cursor-pointer select-none" data-letter="${alt.letter}">
-                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 mr-4 letter-circle border border-gray-200 dark:border-gray-600 shadow-sm text-lg">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 mr-4 letter-circle border border-gray-200 dark:border-gray-600 shadow-sm text-lg mt-1">
                                     ${alt.letter}
                                 </div>
-                                <div class="flex-grow pt-1.5 text-gray-800 dark:text-gray-200 text-[15px] sm:text-base">
-                                    ${alt.text ? `<span class="whitespace-pre-wrap block">${escapeHtml(alt.text)}</span>` : ''}
-                                    ${alt.file ? `<img src="${alt.file}" class="mt-3 max-w-full h-auto rounded shadow-sm border border-gray-200 dark:border-gray-700" alt="Alternativa ${alt.letter}" loading="lazy">` : ''}
+                                <div class="flex-grow text-gray-800 dark:text-gray-200 text-[15px] sm:text-base prose prose-slate prose-blue dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-normal prose-img:my-2 prose-img:max-h-48">
+                                    ${altParsedHTML}
+                                    ${alt.file ? `<img src="${alt.file}" class="mt-3 max-w-full h-auto rounded shadow-sm border border-gray-200 dark:border-gray-700">` : ''}
                                 </div>
                             </div>
                         `;
@@ -582,11 +567,12 @@
                 card.className = 'bg-white dark:bg-darkCard rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-800 fade-in';
                 card.style.animationDelay = `${Math.min(index * 0.05, 0.5)}s`;
                 
+                // Usando a classe 'prose' do Tailwind para embelezar o HTML gerado pelo Markdown
                 card.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3 pb-4 border-b border-gray-100 dark:border-gray-800">
                         <h3 class="text-xl font-extrabold text-gray-900 dark:text-white flex items-center">
                             <i class="fa-solid fa-clipboard-question text-primary mr-2 opacity-80"></i>
-                            ${escapeHtml(q.title || `Questão ${q.index}`)}
+                            ${q.title || `Questão ${q.index}`}
                         </h3>
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 flex items-center">
@@ -598,9 +584,8 @@
                         </div>
                     </div>
                     
-                    <div class="question-body">
-                        ${contextHtml}
-                        ${filesHtml}
+                    <div class="question-body prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base">
+                        ${processedHTML}
                     </div>
                     
                     ${altsHtml}
@@ -614,6 +599,7 @@
                 container.appendChild(card);
             });
 
+            // Processa as equações matemáticas (MathJax) depois de injetar o HTML
             if (window.MathJax) {
                 MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err.message));
             }
