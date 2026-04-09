@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENEM Hub | Banco de Questões Inteligente</title>
+    <title>ENEM Hub | O Banco Definitivo de Questões</title>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Inter para interface, Merriweather para textos de prova -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Tailwind CSS com plugin de Tipografia (para formatação elegante de artigos) -->
+    <!-- Tailwind CSS & Plugin de Tipografia -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
         tailwind.config = {
@@ -28,21 +28,25 @@
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
                     }
                 }
             }
         }
     </script>
 
-    <!-- Markdown Parser -->
+    <!-- Marked.js: O Interpretador de Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- MathJax (Motor de equações matemáticas do ENEM) -->
+    <!-- MathJax: Motor de Fórmulas Matemáticas (LaTeX) -->
     <script>
         window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'],['\\[', '\\]']] 
+            },
             svg: { fontCache: 'global' },
-            startup: { typeset: false } // Nós vamos rodar manualmente após carregar as questões
+            startup: { typeset: false } // Nós disparamos manualmente após as questões renderizarem
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -50,7 +54,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* Scrollbar Moderna */
+        /* Custom Scrollbar Edge */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         .dark ::-webkit-scrollbar-track { background: #0f172a; }
@@ -58,14 +62,13 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Animações */
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        /* Animações e Skeletons */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Loading Skeletons */
         .skeleton {
             background-image: linear-gradient(90deg, #e2e8f0 0px, #f1f5f9 40px, #e2e8f0 80px);
             background-size: 200% 100%;
@@ -74,41 +77,51 @@
         .dark .skeleton {
             background-image: linear-gradient(90deg, #334155 0px, #475569 40px, #334155 80px);
         }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        /* Configurações Avançadas de Imagens nas Questões */
+        /* Estilização Cirúrgica de Conteúdo Markdown (.prose) */
+        .prose { font-family: 'Merriweather', serif; font-size: 1.05rem; leading-trim: normal; }
+        .prose p { margin-bottom: 1.25em; line-height: 1.8; color: #334155; }
+        .dark .prose p { color: #cbd5e1; }
+        .prose strong { color: #1e293b; font-weight: 700; }
+        .dark .prose strong { color: #f8fafc; }
+        
+        /* Correção para Imagens renderizadas pelo Markdown */
         .prose img { 
             border-radius: 0.75rem; 
-            margin: 1.5rem auto; 
+            margin-left: auto; 
+            margin-right: auto;
             max-height: 450px;
             object-fit: contain;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            background-color: white; /* Gráficos do ENEM costumam ter fundo branco */
+            padding: 0.5rem;
         }
-        .dark .prose img { border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3); }
-        
-        .alternative-item { transition: all 0.2s ease; }
-        .letter-circle { transition: all 0.2s ease; }
+        .dark .prose img { border: 1px solid #334155; }
+
+        /* Interações das Alternativas */
+        .alternative-item { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .letter-circle { transition: all 0.25s ease; flex-shrink: 0; }
         select { outline: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-dark dark:text-gray-200 transition-colors duration-300 antialiased flex flex-col min-h-screen">
 
-    <!-- Navegação -->
+    <!-- Navbar -->
     <nav class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <i class="fa-solid fa-graduation-cap text-primary text-3xl mr-3"></i>
+                    <div class="bg-primary/10 p-2 rounded-lg mr-3">
+                        <i class="fa-solid fa-graduation-cap text-primary text-2xl"></i>
+                    </div>
                     <span class="font-extrabold text-2xl tracking-tight text-gray-900 dark:text-white">ENEM<span class="text-primary">Hub</span></span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button id="theme-toggle" class="p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition flex items-center justify-center w-10 h-10">
+                    <button id="theme-toggle" class="p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition flex items-center justify-center w-10 h-10 shadow-inner">
                         <i class="fa-solid fa-moon text-gray-600 dark:text-gray-300 text-lg"></i>
                     </button>
-                    <a href="https://github.com/yunger7/enem-api" target="_blank" class="p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition flex items-center justify-center w-10 h-10" title="API Fonte no GitHub">
+                    <a href="https://github.com/yunger7/enem-api" target="_blank" class="p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition flex items-center justify-center w-10 h-10 shadow-inner" title="Repositório Original da API">
                         <i class="fa-brands fa-github text-gray-700 dark:text-gray-200 text-xl"></i>
                     </a>
                 </div>
@@ -116,36 +129,38 @@
         </div>
     </nav>
 
-    <!-- Cabeçalho Principal -->
-    <header class="bg-primary text-white py-12 relative overflow-hidden rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-7xl mt-6 shadow-xl hidden md:block">
-        <div class="absolute inset-0 opacity-10 flex flex-wrap gap-12 justify-center items-center pointer-events-none text-6xl select-none">
-            <i class="fa-solid fa-calculator"></i><i class="fa-solid fa-flask"></i><i class="fa-solid fa-book"></i>
-            <i class="fa-solid fa-globe"></i><i class="fa-solid fa-atom"></i><i class="fa-solid fa-dna"></i>
+    <!-- Banner Hero -->
+    <header class="bg-gradient-to-r from-blue-700 to-primary text-white py-14 relative overflow-hidden rounded-3xl mx-4 sm:mx-6 lg:mx-auto max-w-7xl mt-8 shadow-2xl hidden md:block border border-blue-600/50">
+        <div class="absolute inset-0 opacity-10 flex flex-wrap gap-12 justify-center items-center pointer-events-none text-7xl select-none mix-blend-overlay">
+            <i class="fa-solid fa-calculator"></i><i class="fa-solid fa-flask"></i><i class="fa-solid fa-book-open"></i>
+            <i class="fa-solid fa-globe-americas"></i><i class="fa-solid fa-atom"></i><i class="fa-solid fa-dna"></i>
+            <i class="fa-solid fa-chart-line"></i><i class="fa-solid fa-language"></i>
         </div>
         <div class="relative max-w-4xl mx-auto px-6 text-center z-10">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">O Maior Banco de Questões do ENEM</h1>
-            <p class="text-lg md:text-xl text-blue-100 mb-0 font-light drop-shadow">Textos, imagens e fórmulas complexas formatadas com perfeição. Pratique de graça.</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-5 tracking-tight drop-shadow-lg leading-tight">A Base de Dados Definitiva do ENEM</h1>
+            <p class="text-lg md:text-xl text-blue-100 mb-0 font-medium drop-shadow opacity-90">Textos, imagens e fórmulas complexas formatadas com perfeição matemática.</p>
         </div>
     </header>
 
-    <!-- Conteúdo Central -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col md:flex-row gap-8">
+    <!-- Painel Principal -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col lg:flex-row gap-8">
         
-        <!-- Barra Lateral (Filtros) -->
-        <aside class="w-full md:w-80 flex-shrink-0">
-            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-24 transition-colors duration-300">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center border-b border-gray-100 dark:border-gray-700 pb-4">
-                    <i class="fa-solid fa-filter text-primary mr-3"></i> Filtrar Questões
+        <!-- Sidebar de Filtros -->
+        <aside class="w-full lg:w-80 flex-shrink-0">
+            <div class="bg-white dark:bg-darkCard rounded-3xl shadow-sm border border-gray-200 dark:border-gray-700/80 p-6 sticky top-24 transition-colors duration-300">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center pb-4 border-b border-gray-100 dark:border-gray-700/80">
+                    <i class="fa-solid fa-filter text-primary mr-3"></i> Filtros de Busca
                 </h2>
                 
-                <div class="space-y-6">
+                <div class="space-y-5 font-sans">
+                    <!-- Ano -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fa-regular fa-calendar text-primary mr-1 w-5 text-center"></i> Ano da Prova
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-regular fa-calendar-check text-primary/80 mr-1.5 w-5 text-center"></i> Ano da Prova
                         </label>
                         <div class="relative">
-                            <select id="filter-year" class="appearance-none w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium">
-                                <option value="">Carregando anos...</option>
+                            <select id="filter-year" class="appearance-none w-full bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600/60 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium shadow-sm">
+                                <option value="">Conectando banco de dados...</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
                                 <i class="fa-solid fa-chevron-down text-sm"></i>
@@ -153,12 +168,13 @@
                         </div>
                     </div>
                     
+                    <!-- Área de Conhecimento -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fa-solid fa-book-open text-primary mr-1 w-5 text-center"></i> Área de Conhecimento
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-solid fa-book-journal-whills text-primary/80 mr-1.5 w-5 text-center"></i> Área de Conhecimento
                         </label>
                         <div class="relative">
-                            <select id="filter-discipline" class="appearance-none w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium">
+                            <select id="filter-discipline" class="appearance-none w-full bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600/60 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium shadow-sm">
                                 <option value="all">Todas as Áreas</option>
                                 <option value="ciencias-humanas">Ciências Humanas</option>
                                 <option value="ciencias-natureza">Ciências da Natureza</option>
@@ -171,12 +187,13 @@
                         </div>
                     </div>
 
+                    <!-- Idioma (Condicional) -->
                     <div id="language-container">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fa-solid fa-language text-primary mr-1 w-5 text-center"></i> Idioma (Linguagens)
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-solid fa-language text-primary/80 mr-1.5 w-5 text-center"></i> Idioma Estrangeiro
                         </label>
                         <div class="relative">
-                            <select id="filter-language" class="appearance-none w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium">
+                            <select id="filter-language" class="appearance-none w-full bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600/60 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 pr-10 transition-colors cursor-pointer font-medium shadow-sm">
                                 <option value="all">Ambos</option>
                                 <option value="ingles">Inglês</option>
                                 <option value="espanhol">Espanhol</option>
@@ -187,54 +204,61 @@
                         </div>
                     </div>
 
+                    <!-- Busca Textual -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fa-solid fa-magnifying-glass text-primary mr-1 w-5 text-center"></i> Palavra-chave (Conteúdo)
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fa-solid fa-magnifying-glass text-primary/80 mr-1.5 w-5 text-center"></i> Palavra-chave ou Tema
                         </label>
-                        <input type="text" id="filter-keyword" placeholder="Ex: Fotossíntese, Vargas..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 transition-colors font-medium">
+                        <input type="text" id="filter-keyword" placeholder="Ex: Fotossíntese, Logaritmo..." class="w-full bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600/60 text-gray-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3.5 transition-colors font-medium shadow-sm placeholder-gray-400 dark:placeholder-gray-500">
                     </div>
 
-                    <button id="btn-search" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center mt-4">
-                        <i class="fa-solid fa-search mr-2"></i> Buscar Questões
+                    <button id="btn-search" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center mt-6 active:transform active:scale-95">
+                        <i class="fa-solid fa-bolt mr-2 text-yellow-300"></i> Executar Busca
                     </button>
                 </div>
             </div>
         </aside>
 
-        <!-- Feed de Questões -->
+        <!-- Feed de Resultados -->
         <section class="flex-grow min-w-0">
-            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-6 md:mt-0">
+            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-2 lg:mt-0 px-2 sm:px-0">
                 <div>
-                    <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Resultados da Busca</h2>
-                    <p class="text-gray-500 dark:text-gray-400 mt-1" id="results-count">Aguardando pesquisa...</p>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Caderno de Prova</h2>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1 font-medium" id="results-count">Aguardando configuração dos filtros...</p>
                 </div>
             </div>
 
-            <!-- Loading Skeleton Otimizado -->
+            <!-- Loader Inteligente e Progressivo -->
             <div id="loader" class="hidden flex-col items-center py-6 w-full fade-in">
-                <div class="text-center mb-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl w-full border border-blue-100 dark:border-blue-800/30">
-                    <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-2" id="loader-text">
-                        <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Consultando a API Oficial...
+                <div class="text-center mb-8 bg-blue-50/80 dark:bg-blue-900/10 p-6 sm:p-8 rounded-3xl w-full border border-blue-100 dark:border-blue-800/30 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-blue-100 dark:bg-blue-900/30">
+                        <div class="h-full bg-primary w-1/3 animate-[shimmer_1.5s_infinite_linear]"></div>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-primary dark:text-blue-400 mb-3" id="loader-text">
+                        <i class="fa-solid fa-server fa-beat mr-3 text-blue-500"></i> Extraindo dados da API Oficial...
                     </h3>
-                    <p class="text-blue-600 dark:text-blue-300 text-sm">Respeitando os limites do servidor para baixar suas questões...</p>
+                    <p class="text-blue-700/80 dark:text-blue-300/80 text-sm sm:text-base max-w-lg mx-auto font-medium">Isso pode levar alguns segundos. Estamos respeitando o limite do servidor para baixar todas as questões do ano selecionado.</p>
                 </div>
                 
-                <div class="w-full space-y-6">
+                <!-- Skeletons que imitam cards reais -->
+                <div class="w-full space-y-8">
                     <script>
-                        for(let i=0; i<2; i++) {
+                        for(let i=0; i<3; i++) {
                             document.write(`
-                            <div class="bg-white dark:bg-darkCard rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 w-full mb-6">
-                                <div class="flex justify-between items-center mb-6">
-                                    <div class="skeleton h-7 w-2/4 rounded-lg"></div>
-                                    <div class="skeleton h-6 w-24 rounded-full"></div>
+                            <div class="bg-white dark:bg-darkCard rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 dark:border-gray-700/60 w-full">
+                                <div class="flex justify-between items-center mb-8 border-b border-gray-50 dark:border-gray-800 pb-5">
+                                    <div class="skeleton h-8 w-2/5 rounded-lg"></div>
+                                    <div class="skeleton h-8 w-28 rounded-full"></div>
                                 </div>
-                                <div class="skeleton h-4 w-full rounded mb-3"></div>
-                                <div class="skeleton h-4 w-full rounded mb-3"></div>
-                                <div class="skeleton h-4 w-3/4 rounded mb-8"></div>
+                                <div class="skeleton h-5 w-full rounded mb-3"></div>
+                                <div class="skeleton h-5 w-11/12 rounded mb-3"></div>
+                                <div class="skeleton h-5 w-full rounded mb-3"></div>
+                                <div class="skeleton h-5 w-3/4 rounded mb-10"></div>
                                 <div class="space-y-4">
-                                    <div class="skeleton h-14 w-full rounded-xl"></div>
-                                    <div class="skeleton h-14 w-full rounded-xl"></div>
-                                    <div class="skeleton h-14 w-full rounded-xl"></div>
+                                    <div class="skeleton h-16 w-full rounded-2xl"></div>
+                                    <div class="skeleton h-16 w-full rounded-2xl"></div>
+                                    <div class="skeleton h-16 w-full rounded-2xl"></div>
+                                    <div class="skeleton h-16 w-full rounded-2xl"></div>
                                 </div>
                             </div>`);
                         }
@@ -242,61 +266,80 @@
                 </div>
             </div>
 
+            <!-- Div Onde as Questões Nascem -->
             <div id="questions-container" class="space-y-8" data-loaded-year=""></div>
             
-            <!-- Sem Resultados -->
-            <div id="empty-state" class="hidden text-center py-20 bg-white dark:bg-darkCard rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm mt-4">
-                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50 dark:bg-gray-800 mb-6">
-                    <i class="fa-solid fa-box-open text-3xl text-primary"></i>
+            <!-- Estado Vazio Customizado -->
+            <div id="empty-state" class="hidden text-center py-20 px-6 bg-white dark:bg-darkCard rounded-3xl border border-gray-100 dark:border-gray-700/60 shadow-sm mt-4 fade-in">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-50 dark:bg-gray-800/80 mb-6 shadow-inner border border-gray-100 dark:border-gray-700">
+                    <i class="fa-solid fa-ghost text-4xl text-gray-400 dark:text-gray-500"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Nenhuma questão encontrada</h3>
-                <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">Não encontramos questões com esse filtro. Tente alterar a área de conhecimento ou a palavra-chave.</p>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">Nenhuma questão encontrada</h3>
+                <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto text-lg">Parece que os filtros estão muito restritos. Tente remover palavras-chave ou alterar a área de conhecimento.</p>
             </div>
         </section>
     </main>
 
-    <!-- Topo -->
-    <button id="btn-top" class="fixed bottom-8 right-8 bg-primary hover:bg-blue-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-xl transition-all duration-300 opacity-0 invisible translate-y-4 z-50 text-xl">
-        <i class="fa-solid fa-arrow-up"></i>
+    <!-- Floating Action Button: Scroll To Top -->
+    <button id="btn-top" class="fixed bottom-8 right-8 bg-gray-900 hover:bg-black dark:bg-primary dark:hover:bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl transition-all duration-300 opacity-0 invisible translate-y-6 z-50 text-xl border-2 border-white/10" aria-label="Voltar ao topo">
+        <i class="fa-solid fa-chevron-up"></i>
     </button>
 
-    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto py-10 transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="flex items-center justify-center mb-4">
-                <i class="fa-solid fa-graduation-cap text-primary text-3xl mr-3"></i>
-                <span class="font-extrabold text-2xl text-gray-900 dark:text-white">ENEM<span class="text-primary">Hub</span></span>
+    <!-- Footer minimalista -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800/80 mt-auto py-12 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <i class="fa-solid fa-graduation-cap text-gray-400 text-3xl mr-3"></i>
+                <span class="font-extrabold text-2xl text-gray-300 dark:text-gray-700">ENEM<span class="text-gray-400 dark:text-gray-600">Hub</span></span>
             </div>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mt-6">&copy; 2026 ENEM Hub. Open Source Data.</p>
+            <div class="text-center md:text-right font-medium text-sm text-gray-500 dark:text-gray-400">
+                <p>Criado com base no repositório open-source <strong>yunger7/enem-api</strong>.</p>
+                <p class="mt-1">&copy; 2026 Inteligência Artificial Avançada.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- A Lógica Central da Aplicação -->
     <script>
+        // API Base
         const API_BASE = 'https://api.enem.dev/v1';
         let currentYearData =[];
         let isFetching = false;
 
-        // Configurando Markdown (Trata perfeitamente imagens ![]() e tabelas)
-        marked.setOptions({ breaks: true, gfm: true });
+        // Configuração do motor de Markdown para entender quebras de linha e tabelas (GFM)
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
 
+        // Inicialização Principal
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
             loadFilters();
             
+            // Monitoramento do Scroll
             window.addEventListener('scroll', () => {
                 const btn = document.getElementById('btn-top');
-                if (window.scrollY > 400) {
-                    btn.classList.remove('opacity-0', 'invisible', 'translate-y-4');
+                if (window.scrollY > 500) {
+                    btn.classList.remove('opacity-0', 'invisible', 'translate-y-6');
                     btn.classList.add('opacity-100', 'visible', 'translate-y-0');
                 } else {
-                    btn.classList.add('opacity-0', 'invisible', 'translate-y-4');
+                    btn.classList.add('opacity-0', 'invisible', 'translate-y-6');
                     btn.classList.remove('opacity-100', 'visible', 'translate-y-0');
                 }
             });
 
-            document.getElementById('btn-top').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            document.getElementById('btn-top').addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Listeners de Busca
             document.getElementById('btn-search').addEventListener('click', triggerSearch);
-            document.getElementById('filter-keyword').addEventListener('keypress', (e) => { if (e.key === 'Enter') triggerSearch(); });
+            document.getElementById('filter-keyword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') triggerSearch();
+            });
             
+            // Controle dinâmico do container de Linguagens
             document.getElementById('filter-discipline').addEventListener('change', (e) => {
                 const langContainer = document.getElementById('language-container');
                 if (e.target.value === 'linguagens' || e.target.value === 'all') {
@@ -309,10 +352,18 @@
             });
         });
 
+        // Gerenciamento de Tema Claro/Escuro
         function initTheme() {
             const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             const icon = document.querySelector('#theme-toggle i');
-            if (isDark) { document.documentElement.classList.add('dark'); icon.classList.replace('fa-moon', 'fa-sun'); }
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                document.documentElement.classList.remove('dark');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
             
             document.getElementById('theme-toggle').addEventListener('click', () => {
                 document.documentElement.classList.toggle('dark');
@@ -322,34 +373,42 @@
             });
         }
 
+        // Puxa os anos reais disponíveis na API
         async function loadFilters() {
             try {
                 const res = await fetch(`${API_BASE}/exams`);
+                if(!res.ok) throw new Error();
                 const data = await res.json();
                 let years = [...new Set(data.map(e => e.year))].sort((a, b) => b - a);
                 populateYears(years);
             } catch (e) {
-                populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017]);
+                console.warn("Usando fallback de anos devido a limite inicial de API");
+                populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]);
             }
         }
 
         function populateYears(years) {
             const yearSelect = document.getElementById('filter-year');
             yearSelect.innerHTML = '';
-            years.forEach(y => yearSelect.innerHTML += `<option value="${y}">${y}</option>`);
+            years.forEach(y => yearSelect.innerHTML += `<option value="${y}" class="font-medium">${y}</option>`);
             if(years.length > 0) triggerSearch();
         }
 
+        // Disparador Principal
         function triggerSearch() {
             const year = document.getElementById('filter-year').value;
             const discipline = document.getElementById('filter-discipline').value;
             const language = document.getElementById('filter-language').value;
+            
             if(year) fetchAndRenderQuestions(year, discipline, language);
         }
 
+        // Motor de Extração de Dados (Paginação + Contenção de Rate Limit)
         async function fetchAndRenderQuestions(year, discipline, language) {
             if(isFetching) return;
             const container = document.getElementById('questions-container');
+            
+            // Cache Inteligente: Se já baixou este ano, apenas refiltra localmente
             if (container.getAttribute('data-loaded-year') === year.toString() && currentYearData.length > 0) {
                 applyFiltersAndRender(discipline, language);
                 return;
@@ -365,38 +424,46 @@
                 const loaderText = document.getElementById('loader-text');
                 
                 while(hasMore) {
-                    if (offset === 0) loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API Oficial...`;
+                    if (offset === 0) loaderText.innerHTML = `<i class="fa-solid fa-server fa-beat mr-3 text-blue-500"></i> Conectando à API Oficial...`;
 
+                    // limit=50 evita travamento do backend da API
                     const res = await fetch(`${API_BASE}/exams/${year}/questions?limit=50&offset=${offset}`);
-                    if (!res.ok) throw new Error(`Status ${res.status}`);
+                    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
                     
                     const data = await res.json();
                     const pageQuestions = data.questions || data.data || (Array.isArray(data) ? data :[]);
                     currentYearData.push(...pageQuestions);
                     
                     const total = data.total || '?';
-                    loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Baixando questões... (${currentYearData.length}/${total})`;
+                    loaderText.innerHTML = `<i class="fa-solid fa-download fa-bounce mr-3 text-blue-500"></i> Extraindo caderno de provas... (${currentYearData.length} de ${total})`;
                     
                     hasMore = data.hasMore || (data.metadata && data.metadata.hasMore);
                     if (hasMore === undefined) hasMore = pageQuestions.length >= 50; 
                     
                     if (hasMore) {
                         offset += 50;
-                        await new Promise(resolve => setTimeout(resolve, 1100)); // Rate limit evasion
+                        // Delay vital de 1.1s (A API do ENEM só aceita 1 requisição por segundo)
+                        await new Promise(resolve => setTimeout(resolve, 1100)); 
                     }
                 }
 
-                if (currentYearData.length === 0) throw new Error("A API não retornou questões.");
+                if (currentYearData.length === 0) throw new Error("A API retornou um caderno de prova vazio.");
+                
                 container.setAttribute('data-loaded-year', year);
                 applyFiltersAndRender(discipline, language);
                 
             } catch (e) {
+                console.error("Critical Fetch Error:", e);
                 container.innerHTML = `
-                    <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-8 rounded-2xl border border-red-200 dark:border-red-800/30 text-center fade-in shadow-sm">
-                        <i class="fa-solid fa-triangle-exclamation text-5xl mb-5 opacity-90"></i>
-                        <h3 class="text-2xl font-bold mb-3">Não foi possível carregar</h3>
-                        <p class="mb-6">Houve uma instabilidade na comunicação com a base do ENEM.</p>
-                        <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md">Tentar Novamente</button>
+                    <div class="bg-red-50 dark:bg-red-900/10 border-2 border-red-200 dark:border-red-800/40 rounded-3xl p-8 sm:p-12 text-center fade-in shadow-sm mx-auto max-w-2xl">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 mb-6 text-red-500 dark:text-red-400">
+                            <i class="fa-solid fa-triangle-exclamation text-4xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-red-800 dark:text-red-300">Falha de Conexão</h3>
+                        <p class="mb-8 text-red-600/80 dark:text-red-400/80 font-medium">O servidor do ENEM negou o acesso ou está sobrecarregado. Aguarde alguns segundos e tente novamente.</p>
+                        <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-red-500/30 flex items-center mx-auto">
+                            <i class="fa-solid fa-rotate-right mr-2"></i> Tentar Novamente
+                        </button>
                     </div>`;
                 container.setAttribute('data-loaded-year', '');
             } finally {
@@ -405,70 +472,101 @@
             }
         }
 
-        // Esta função garante que a Matemática (LaTeX) do ENEM não seja destruída pelo processador Markdown
+        // ========================================================================
+        // O CORAÇÃO DO SISTEMA: O PROTETOR DE MATEMÁTICA E RENDERIZADOR MARKDOWN
+        // ========================================================================
         function parseTextSafely(text) {
-            if (!text) return '';
+            if (!text || typeof text !== 'string') return '';
+            
             const mathBlocks =[];
             let processed = text;
             
-            // Mascara equações isolando-as
-            const replacer = (match) => {
-                mathBlocks.push(match);
-                return `@@MATH_BLOCK_${mathBlocks.length - 1}@@`;
-            };
+            // Regexes rigorosas para extrair o LaTeX antes do Markdown quebrar as contrabarras e sublinhados
+            const mathRegexes = [
+                /\$\$[\s\S]+?\$\$/g, // Equação em bloco $$ ... $$
+                /\\\[[\s\S]+?\\\]/g, // Equação em bloco \[ ... \]
+                /\$[\s\S]+?\$/g,     // Equação inline $ ... $
+                /\\\([\s\S]+?\\\)/g  // Equação inline \( ... \)
+            ];
 
-            processed = processed.replace(/\$\$(.*?)\$\$/gs, replacer);
-            processed = processed.replace(/\\\[(.*?)\\\]/gs, replacer);
-            processed = processed.replace(/\$(.*?)\$/g, replacer);
-            processed = processed.replace(/\\\((.*?)\\\)/g, replacer);
+            // 1. Extrai a matemática e a substitui por um código inviolável
+            mathRegexes.forEach(regex => {
+                processed = processed.replace(regex, (match) => {
+                    mathBlocks.push(match);
+                    return `___MATH_BLOCK_SAFE_${mathBlocks.length - 1}___`;
+                });
+            });
 
-            // Roda o Markdown
+            // 2. Transforma o texto (agora sem matemática) usando Marked.js (Gera negritos, tabelas e transforma ![] em imagens)
             let html = marked.parse(processed);
 
-            // Devolve as equações matemáticas para o HTML gerado
+            // 3. Devolve a matemática exata para os lugares originais
             mathBlocks.forEach((block, index) => {
-                html = html.replace(`@@MATH_BLOCK_${index}@@`, block);
+                html = html.replace(`___MATH_BLOCK_SAFE_${index}___`, block);
             });
 
             return html;
         }
 
+        // Aplicador de Filtros na Memória
         function applyFiltersAndRender(discipline, language) {
-            const keyword = document.getElementById('filter-keyword').value.toLowerCase();
+            const keyword = document.getElementById('filter-keyword').value.toLowerCase().trim();
             let filtered = currentYearData;
             
-            if (discipline !== 'all') filtered = filtered.filter(q => q.discipline === discipline);
-            if (discipline === 'all' || discipline === 'linguagens') {
-                if (language !== 'all') filtered = filtered.filter(q => !q.language || q.language === language);
+            if (discipline !== 'all') {
+                filtered = filtered.filter(q => q.discipline === discipline);
             }
             
-            if (keyword.trim() !== '') {
+            if (discipline === 'all' || discipline === 'linguagens') {
+                if (language !== 'all') {
+                    filtered = filtered.filter(q => !q.language || q.language === language);
+                }
+            }
+            
+            // Busca Full-Text avançada pegando todos os pedaços da questão
+            if (keyword !== '') {
                 filtered = filtered.filter(q => {
-                    const textContent = `${q.context || ''} ${q.alternativesIntroduction || ''} ${q.title || ''}`.toLowerCase();
-                    const altContent = (q.alternatives ||[]).map(a => a.text || '').join(' ').toLowerCase();
-                    return textContent.includes(keyword) || altContent.includes(keyword);
+                    const fullContext =[
+                        q.title, 
+                        q.context, 
+                        q.text, 
+                        q.body, 
+                        q.statement, 
+                        q.alternativesIntroduction,
+                        ...(q.alternatives || []).map(a => a.text)
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    
+                    return fullContext.includes(keyword);
                 });
             }
             
             renderQuestionsHTML(filtered);
         }
 
+        // Construtor Visual de Cartões de Questão
         function renderQuestionsHTML(data) {
             const container = document.getElementById('questions-container');
             const emptyState = document.getElementById('empty-state');
             const resultsCount = document.getElementById('results-count');
             
             container.innerHTML = '';
+            
             if (data.length === 0) {
                 emptyState.classList.remove('hidden');
-                resultsCount.innerText = `Nenhuma questão encontrada.`;
+                resultsCount.innerHTML = `Nenhuma questão corresponde aos filtros.`;
                 return;
             }
             
             emptyState.classList.add('hidden');
-            resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões.`;
+            resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões do caderno.`;
 
-            const discLabels = { 'ciencias-humanas': 'Ciências Humanas', 'ciencias-natureza': 'Ciências da Natureza', 'linguagens': 'Linguagens e Códigos', 'matematica': 'Matemática' };
+            // Dicionários Visuais
+            const discLabels = {
+                'ciencias-humanas': 'Ciências Humanas',
+                'ciencias-natureza': 'Ciências da Natureza',
+                'linguagens': 'Linguagens e Códigos',
+                'matematica': 'Matemática'
+            };
             const discColors = {
                 'ciencias-humanas': 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800/50',
                 'ciencias-natureza': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/50',
@@ -476,86 +574,120 @@
                 'matematica': 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/50'
             };
 
+            // Processamento Individual de Cada Questão
             data.forEach((q, index) => {
                 let badgeText = discLabels[q.discipline] || (q.discipline ? q.discipline.toUpperCase() : 'GERAL');
-                let badgeColor = discColors[q.discipline] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
-                if(q.language) badgeText += ` <span class="opacity-75 font-normal ml-1">(${q.language === 'ingles' ? 'Inglês' : 'Espanhol'})</span>`;
+                let badgeColor = discColors[q.discipline] || 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
 
-                // Construção robusta do Corpo da Questão 
-                // Contexto (Base do texto, gráficos markdown)
-                let contextHtml = q.context ? `<div class="prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base mb-6 break-words">${parseTextSafely(q.context)}</div>` : '';
-                
-                // Imagens externas anexadas (quando a API separa imagens do texto)
-                let filesHtml = '';
-                if (q.files && q.files.length > 0) {
-                    filesHtml = `<div class="mb-6 flex flex-col items-center gap-4 bg-white dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700/60 shadow-sm">`;
-                    q.files.forEach(file => filesHtml += `<img src="${file}" class="max-w-full h-auto rounded" alt="Imagem auxiliar" loading="lazy">`);
-                    filesHtml += `</div>`;
+                if (q.language) {
+                    badgeText += ` <span class="opacity-70 font-medium ml-1 bg-white/50 dark:bg-black/20 px-1.5 py-0.5 rounded text-[10px] uppercase">${q.language === 'ingles' ? 'Inglês' : 'Espanhol'}</span>`;
+                }
+
+                // 1. Textos Base (TEXTO I, Artigos, etc) processados com perfeição via Marked
+                let contextHtml = '';
+                if (q.context) {
+                    contextHtml = `<div class="prose dark:prose-invert max-w-none mb-6">${parseTextSafely(q.context)}</div>`;
                 }
                 
-                // Extra Text (Garantia para padrões passados da API)
-                let extraHtml = '';['text', 'statement', 'question', 'body'].forEach(field => {
-                    if (q[field]) extraHtml += `<div class="prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base mb-6">${parseTextSafely(q[field])}</div>`;
-                });
+                // 2. Gráficos/Imagens Anexas
+                let filesHtml = '';
+                if (q.files && q.files.length > 0) {
+                    filesHtml = `<div class="mb-8 p-6 bg-gray-50 dark:bg-gray-800/30 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex flex-col items-center justify-center gap-6 shadow-inner">`;
+                    q.files.forEach(imgUrl => {
+                        filesHtml += `<img src="${imgUrl}" class="max-w-full h-auto rounded-lg shadow-sm bg-white p-2 border border-gray-200 dark:border-gray-700" loading="lazy" alt="Imagem da Questão">`;
+                    });
+                    filesHtml += `</div>`;
+                }
 
-                // ENUNCIADO REAL: A API guarda a pergunta final no campo alternativesIntroduction
-                let statementHtml = q.alternativesIntroduction ? `<div class="prose prose-slate prose-blue dark:prose-invert max-w-none text-[15px] sm:text-base font-bold mb-6">${parseTextSafely(q.alternativesIntroduction)}</div>` : '';
+                // 3. O Enunciado Oculto (A pergunta final do ENEM)
+                let statementHtml = '';
+                if (q.alternativesIntroduction) {
+                    // Adicionamos a classe font-bold na tag P interna gerada pelo Markdown
+                    let parsedStmt = parseTextSafely(q.alternativesIntroduction);
+                    // Um hack elegante via CSS inline para garantir que o enunciado chame a atenção
+                    statementHtml = `<div class="prose dark:prose-invert max-w-none mb-8 font-bold text-gray-900 dark:text-gray-100 border-l-4 border-primary pl-4 py-1 bg-blue-50/50 dark:bg-blue-900/10 rounded-r-lg">${parsedStmt}</div>`;
+                }
 
-                // Alternativas (Garante exibição mesmo se tiver imagem ou equação na alternativa)
-                let altsHtml = `<div class="space-y-3 mt-6">`;
+                // 4. Alternativas Dinâmicas (Letra + Texto formatado + Imagens eventuais)
+                let altsHtml = `<div class="space-y-3 font-sans">`;
                 if (q.alternatives && q.alternatives.length > 0) {
                     q.alternatives.forEach(alt => {
                         let altParsedHTML = alt.text ? parseTextSafely(alt.text) : '';
                         altsHtml += `
-                            <div onclick="selectAlternative(this)" class="alternative-item flex items-start p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700/60 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition cursor-pointer select-none" data-letter="${alt.letter}">
-                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 mr-4 letter-circle border border-gray-200 dark:border-gray-600 shadow-sm text-lg mt-0.5">
+                            <div onclick="selectAlternative(this)" class="alternative-item group flex items-start p-4 sm:p-5 rounded-2xl border-2 border-gray-100 dark:border-gray-700/60 hover:bg-blue-50/50 dark:hover:bg-gray-800/50 hover:border-blue-200 dark:hover:border-gray-600 transition-all cursor-pointer select-none relative overflow-hidden" data-letter="${alt.letter}">
+                                
+                                <div class="letter-circle w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-bold text-gray-600 dark:text-gray-400 mr-5 border border-gray-200 dark:border-gray-700 shadow-sm text-lg mt-0.5 group-hover:bg-white dark:group-hover:bg-gray-700 group-hover:text-primary">
                                     ${alt.letter}
                                 </div>
-                                <div class="flex-grow text-gray-800 dark:text-gray-200 text-[15px] sm:text-base prose prose-slate prose-blue dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-normal overflow-x-auto">
+                                
+                                <div class="flex-grow text-gray-800 dark:text-gray-200 text-[15px] sm:text-[16px] font-medium pt-1.5 prose dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed">
                                     ${altParsedHTML}
-                                    ${alt.file ? `<img src="${alt.file}" class="${altParsedHTML ? 'mt-3' : ''} max-w-full h-auto rounded shadow-sm border border-gray-200 dark:border-gray-700" loading="lazy">` : ''}
+                                    ${alt.file ? `<div class="mt-4 bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700 inline-block"><img src="${alt.file}" class="max-w-full h-auto rounded" loading="lazy" alt="Alternativa ${alt.letter}"></div>` : ''}
                                 </div>
-                            </div>`;
+                            </div>
+                        `;
                     });
                 } else {
-                    altsHtml += `<div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-xl text-center border border-yellow-200 dark:border-yellow-800/50">Esta questão não possui alternativas cadastradas.</div>`;
+                    altsHtml += `<div class="p-6 bg-yellow-50 dark:bg-yellow-900/10 text-yellow-800 dark:text-yellow-500 rounded-2xl text-center border border-yellow-200 dark:border-yellow-800/40 font-medium flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation mr-3 text-xl"></i> Questão anulada ou sem alternativas válidas na API.</div>`;
                 }
                 altsHtml += `</div>`;
 
+                // Montagem do Cartão
                 const card = document.createElement('article');
-                card.className = 'bg-white dark:bg-darkCard rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-800 fade-in';
+                card.className = 'bg-white dark:bg-darkCard rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700/80 fade-in relative overflow-hidden';
                 card.style.animationDelay = `${Math.min(index * 0.05, 0.5)}s`;
                 
                 card.innerHTML = `
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3 pb-4 border-b border-gray-100 dark:border-gray-800">
-                        <h3 class="text-xl font-extrabold text-gray-900 dark:text-white flex items-center">
-                            <i class="fa-solid fa-clipboard-question text-primary mr-2 opacity-80"></i>
-                            ${q.title || `Questão ${q.index}`}
+                    <!-- Header da Questão -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 pb-5 border-b border-gray-100 dark:border-gray-800">
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white flex items-center tracking-tight">
+                            <span class="bg-primary/10 text-primary w-10 h-10 rounded-xl flex items-center justify-center mr-4 text-sm font-bold shadow-sm">${q.index || '?'}</span>
+                            ${escapeHtml(q.title || `Questão do ENEM`)}
                         </h3>
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"><i class="fa-regular fa-calendar mr-1"></i> ${q.year}</span>
-                            <span class="px-3 py-1.5 rounded-lg text-xs font-bold border ${badgeColor}">${badgeText}</span>
+                            <span class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-50 text-gray-600 border border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 flex items-center shadow-sm">
+                                <i class="fa-regular fa-calendar mr-1.5"></i> ENEM ${q.year}
+                            </span>
+                            <span class="px-3.5 py-1.5 rounded-xl text-xs font-bold border ${badgeColor} flex items-center shadow-sm uppercase tracking-wide">
+                                ${badgeText}
+                            </span>
                         </div>
                     </div>
-                    <div class="question-content overflow-x-auto">
+                    
+                    <!-- Corpo Interpretado -->
+                    <div class="question-body">
                         ${contextHtml}
                         ${filesHtml}
-                        ${extraHtml}
                         ${statementHtml}
                     </div>
-                    ${altsHtml}
-                    <div class="mt-8 pt-5 border-t border-gray-100 dark:border-gray-800 flex justify-end">
-                        <button onclick="revealAnswer(this, '${q.correctAlternative || ''}')" class="bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-6 rounded-xl transition-all flex items-center shadow-sm">
-                            <i class="fa-solid fa-eye text-primary mr-2"></i> Validar Resposta
+                    
+                    <!-- Respostas -->
+                    <div class="mt-2">
+                        ${altsHtml}
+                    </div>
+                    
+                    <!-- Validação -->
+                    <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end font-sans">
+                        <button onclick="revealAnswer(this, '${q.correctAlternative || ''}')" class="bg-gray-900 hover:bg-black dark:bg-gray-800 dark:hover:bg-gray-700 text-white font-bold py-3.5 px-8 rounded-xl transition-all flex items-center shadow-md active:transform active:scale-95 group">
+                            <i class="fa-solid fa-eye text-gray-400 group-hover:text-white mr-3 transition-colors"></i> Revelar Gabarito
                         </button>
-                    </div>`;
+                    </div>
+                `;
                 container.appendChild(card);
             });
 
-            // Dispara o MathJax para processar a matemática depois que tudo for colocado na tela
+            // O Toque Final: Invoca o MathJax para processar a matemática gerada no DOM
             if (window.MathJax && window.MathJax.typesetPromise) {
-                MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err.message));
+                MathJax.typesetPromise().catch((err) => console.log('Erro no MathJax:', err.message));
             }
+        }
+
+        // Funções Auxiliares Visuais
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                 .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
         window.selectAlternative = function(element) {
@@ -564,32 +696,37 @@
             
             const alts = card.querySelectorAll('.alternative-item');
             alts.forEach(a => {
-                a.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
+                a.classList.remove('border-primary', 'bg-blue-50/80', 'dark:bg-blue-900/20');
                 a.classList.add('border-gray-100', 'dark:border-gray-700/60');
                 a.removeAttribute('data-selected');
+                
                 const circle = a.querySelector('.letter-circle');
                 circle.classList.remove('bg-primary', 'text-white', 'border-primary');
-                circle.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                circle.classList.add('bg-gray-100', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-400');
             });
             
             element.classList.remove('border-gray-100', 'dark:border-gray-700/60');
-            element.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
+            element.classList.add('border-primary', 'bg-blue-50/80', 'dark:bg-blue-900/20');
             element.setAttribute('data-selected', 'true');
             
             const circle = element.querySelector('.letter-circle');
-            circle.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+            circle.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-400');
             circle.classList.add('bg-primary', 'text-white', 'border-primary');
         };
 
         window.revealAnswer = function(btn, correctLetter) {
             const card = btn.closest('.fade-in');
             if (card.hasAttribute('data-revealed')) return;
+            
             if (!correctLetter || correctLetter === 'undefined') {
-                btn.innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow-500 mr-2"></i> Gabarito Indisponível`;
-                btn.disabled = true; return;
+                btn.innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow-400 mr-2"></i> Gabarito não fornecido pela API`;
+                btn.disabled = true;
+                btn.classList.add('opacity-70', 'cursor-not-allowed', 'bg-gray-100', 'text-gray-600');
+                return;
             }
 
             card.setAttribute('data-revealed', 'true');
+            
             const alts = card.querySelectorAll('.alternative-item');
             let userSelectedCorrectly = false;
             let hasSelection = false;
@@ -598,51 +735,66 @@
                 const letter = alt.getAttribute('data-letter');
                 const circle = alt.querySelector('.letter-circle');
                 const isSelected = alt.hasAttribute('data-selected');
+                
                 if (isSelected) hasSelection = true;
                 
-                alt.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20', 'hover:bg-gray-50', 'dark:hover:bg-gray-800/50', 'cursor-pointer');
+                // Quebra classes de hover
+                alt.classList.remove('hover:bg-blue-50/50', 'dark:hover:bg-gray-800/50', 'hover:border-blue-200', 'dark:hover:border-gray-600', 'cursor-pointer');
                 alt.classList.add('cursor-default');
+                circle.classList.remove('group-hover:bg-white', 'dark:group-hover:bg-gray-700', 'group-hover:text-primary');
                 
                 if (letter === correctLetter) {
-                    alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
-                    alt.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-                    circle.className = 'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4 letter-circle text-lg mt-0.5 bg-green-500 text-white border-green-500 shadow-sm';
-                    circle.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    alt.classList.remove('border-gray-100', 'dark:border-gray-700/60', 'border-primary');
+                    alt.classList.add('border-green-500', 'bg-green-50/80', 'dark:bg-green-900/20', 'shadow-sm');
+                    
+                    circle.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-400', 'bg-primary', 'border-primary', 'text-primary');
+                    circle.classList.add('bg-green-500', 'text-white', 'border-green-500', 'shadow-md');
+                    circle.innerHTML = '<i class="fa-solid fa-check text-xl"></i>';
+                    
                     if (isSelected) userSelectedCorrectly = true;
                 } else if (isSelected) {
-                    alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
-                    alt.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
-                    circle.className = 'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold mr-4 letter-circle text-lg mt-0.5 bg-red-500 text-white border-red-500 shadow-sm';
-                    circle.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                    alt.classList.remove('border-primary', 'bg-blue-50/80', 'dark:bg-blue-900/20');
+                    alt.classList.add('border-red-500', 'bg-red-50/80', 'dark:bg-red-900/20');
+                    
+                    circle.classList.remove('bg-primary', 'border-primary');
+                    circle.classList.add('bg-red-500', 'text-white', 'border-red-500', 'shadow-md');
+                    circle.innerHTML = '<i class="fa-solid fa-xmark text-xl"></i>';
                 } else {
                     alt.classList.add('opacity-40');
                 }
             });
             
-            btn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'bg-gray-50', 'dark:bg-gray-800');
+            // Botão de feedback inteligente
+            btn.classList.remove('bg-gray-900', 'hover:bg-black', 'dark:bg-gray-800', 'dark:hover:bg-gray-700', 'text-white');
+            btn.classList.add('cursor-not-allowed', 'shadow-none');
+            
             if (!hasSelection) {
-                btn.className += ' bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800';
-                btn.innerHTML = `<i class="fa-solid fa-info-circle mr-2"></i> A resposta correta é ${correctLetter}`;
+                btn.classList.add('bg-blue-50', 'text-blue-700', 'border', 'border-blue-200', 'dark:bg-blue-900/30', 'dark:text-blue-300', 'dark:border-blue-800');
+                btn.innerHTML = `<i class="fa-solid fa-info-circle mr-2 text-lg"></i> Resposta Correta: ${correctLetter}`;
             } else if (userSelectedCorrectly) {
-                btn.className += ' bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800';
-                btn.innerHTML = `<i class="fa-solid fa-face-smile-beam mr-2"></i> Você Acertou!`;
+                btn.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200', 'dark:bg-green-900/30', 'dark:text-green-300', 'dark:border-green-800');
+                btn.innerHTML = `<i class="fa-solid fa-face-smile text-xl mr-2"></i> Mandou bem!`;
             } else {
-                btn.className += ' bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800';
-                btn.innerHTML = `<i class="fa-solid fa-face-frown text-red-500 mr-2"></i> Errado! Resposta: ${correctLetter}`;
+                btn.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200', 'dark:bg-red-900/30', 'dark:text-red-300', 'dark:border-red-800');
+                btn.innerHTML = `<i class="fa-solid fa-face-frown text-xl mr-2 text-red-500"></i> Que pena! O correto é ${correctLetter}`;
             }
             btn.disabled = true;
-            btn.classList.add('cursor-not-allowed');
         };
 
         function showLoader(show) {
             const loader = document.getElementById('loader');
             const container = document.getElementById('questions-container');
             const emptyState = document.getElementById('empty-state');
+            
             if (show) {
-                loader.classList.remove('hidden'); loader.classList.add('flex');
-                container.classList.add('hidden'); emptyState.classList.add('hidden');
+                loader.classList.remove('hidden');
+                loader.classList.add('flex');
+                container.classList.add('hidden');
+                emptyState.classList.add('hidden');
             } else {
-                loader.classList.add('hidden'); loader.classList.remove('flex'); container.classList.remove('hidden');
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+                container.classList.remove('hidden');
             }
         }
     </script>
