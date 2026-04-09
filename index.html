@@ -46,7 +46,7 @@
                 displayMath: [['$$', '$$'],['\\[', '\\]']] 
             },
             svg: { fontCache: 'global' },
-            startup: { typeset: false } // Nós disparamos manualmente após as questões renderizarem
+            startup: { typeset: false }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -54,7 +54,6 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* Custom Scrollbar Edge */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         .dark ::-webkit-scrollbar-track { background: #0f172a; }
@@ -62,7 +61,6 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Animações e Skeletons */
         .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -80,24 +78,28 @@
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* Estilização Cirúrgica de Conteúdo Markdown (.prose) */
-        .prose { font-family: 'Merriweather', serif; font-size: 1.05rem; leading-trim: normal; }
+        .prose { font-family: 'Merriweather', serif; font-size: 1.05rem; }
         .prose p { margin-bottom: 1.25em; line-height: 1.8; color: #334155; }
         .dark .prose p { color: #cbd5e1; }
         .prose strong { color: #1e293b; font-weight: 700; }
         .dark .prose strong { color: #f8fafc; }
         
-        /* Correção para Imagens renderizadas pelo Markdown */
-        .prose img { 
-            border-radius: 0.75rem; 
-            margin-left: auto; 
-            margin-right: auto;
-            max-height: 450px;
+        /* ======== BLINDAGEM GLOBAL DE IMAGENS ======== */
+        .enem-image {
+            display: block;
+            max-width: 100%;
+            max-height: 480px; /* Evita imagens absurdamente longas */
+            width: auto;
+            height: auto;
+            margin: 1.5rem auto; /* Centraliza sempre */
+            border-radius: 0.75rem;
+            background-color: #ffffff !important; /* FUNDO BRANCO OBRIGATÓRIO (corrige PNGs transparentes no modo escuro) */
+            padding: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            border: 1px solid #cbd5e1;
             object-fit: contain;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            background-color: white; /* Gráficos do ENEM costumam ter fundo branco */
-            padding: 0.5rem;
         }
-        .dark .prose img { border: 1px solid #334155; }
+        .dark .enem-image { border-color: #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
 
         /* Interações das Alternativas */
         .alternative-item { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -107,7 +109,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-dark dark:text-gray-200 transition-colors duration-300 antialiased flex flex-col min-h-screen">
 
-    <!-- Navbar -->
     <nav class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -129,7 +130,6 @@
         </div>
     </nav>
 
-    <!-- Banner Hero -->
     <header class="bg-gradient-to-r from-blue-700 to-primary text-white py-14 relative overflow-hidden rounded-3xl mx-4 sm:mx-6 lg:mx-auto max-w-7xl mt-8 shadow-2xl hidden md:block border border-blue-600/50">
         <div class="absolute inset-0 opacity-10 flex flex-wrap gap-12 justify-center items-center pointer-events-none text-7xl select-none mix-blend-overlay">
             <i class="fa-solid fa-calculator"></i><i class="fa-solid fa-flask"></i><i class="fa-solid fa-book-open"></i>
@@ -142,10 +142,8 @@
         </div>
     </header>
 
-    <!-- Painel Principal -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col lg:flex-row gap-8">
         
-        <!-- Sidebar de Filtros -->
         <aside class="w-full lg:w-80 flex-shrink-0">
             <div class="bg-white dark:bg-darkCard rounded-3xl shadow-sm border border-gray-200 dark:border-gray-700/80 p-6 sticky top-24 transition-colors duration-300">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center pb-4 border-b border-gray-100 dark:border-gray-700/80">
@@ -153,7 +151,6 @@
                 </h2>
                 
                 <div class="space-y-5 font-sans">
-                    <!-- Ano -->
                     <div>
                         <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-regular fa-calendar-check text-primary/80 mr-1.5 w-5 text-center"></i> Ano da Prova
@@ -168,7 +165,6 @@
                         </div>
                     </div>
                     
-                    <!-- Área de Conhecimento -->
                     <div>
                         <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-solid fa-book-journal-whills text-primary/80 mr-1.5 w-5 text-center"></i> Área de Conhecimento
@@ -187,7 +183,6 @@
                         </div>
                     </div>
 
-                    <!-- Idioma (Condicional) -->
                     <div id="language-container">
                         <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-solid fa-language text-primary/80 mr-1.5 w-5 text-center"></i> Idioma Estrangeiro
@@ -204,7 +199,6 @@
                         </div>
                     </div>
 
-                    <!-- Busca Textual -->
                     <div>
                         <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fa-solid fa-magnifying-glass text-primary/80 mr-1.5 w-5 text-center"></i> Palavra-chave ou Tema
@@ -219,7 +213,6 @@
             </div>
         </aside>
 
-        <!-- Feed de Resultados -->
         <section class="flex-grow min-w-0">
             <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mt-2 lg:mt-0 px-2 sm:px-0">
                 <div>
@@ -228,7 +221,6 @@
                 </div>
             </div>
 
-            <!-- Loader Inteligente e Progressivo -->
             <div id="loader" class="hidden flex-col items-center py-6 w-full fade-in">
                 <div class="text-center mb-8 bg-blue-50/80 dark:bg-blue-900/10 p-6 sm:p-8 rounded-3xl w-full border border-blue-100 dark:border-blue-800/30 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1 bg-blue-100 dark:bg-blue-900/30">
@@ -240,7 +232,6 @@
                     <p class="text-blue-700/80 dark:text-blue-300/80 text-sm sm:text-base max-w-lg mx-auto font-medium">Isso pode levar alguns segundos. Estamos respeitando o limite do servidor para baixar todas as questões do ano selecionado.</p>
                 </div>
                 
-                <!-- Skeletons que imitam cards reais -->
                 <div class="w-full space-y-8">
                     <script>
                         for(let i=0; i<3; i++) {
@@ -266,10 +257,8 @@
                 </div>
             </div>
 
-            <!-- Div Onde as Questões Nascem -->
             <div id="questions-container" class="space-y-8" data-loaded-year=""></div>
             
-            <!-- Estado Vazio Customizado -->
             <div id="empty-state" class="hidden text-center py-20 px-6 bg-white dark:bg-darkCard rounded-3xl border border-gray-100 dark:border-gray-700/60 shadow-sm mt-4 fade-in">
                 <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-50 dark:bg-gray-800/80 mb-6 shadow-inner border border-gray-100 dark:border-gray-700">
                     <i class="fa-solid fa-ghost text-4xl text-gray-400 dark:text-gray-500"></i>
@@ -280,12 +269,10 @@
         </section>
     </main>
 
-    <!-- Floating Action Button: Scroll To Top -->
     <button id="btn-top" class="fixed bottom-8 right-8 bg-gray-900 hover:bg-black dark:bg-primary dark:hover:bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl transition-all duration-300 opacity-0 invisible translate-y-6 z-50 text-xl border-2 border-white/10" aria-label="Voltar ao topo">
         <i class="fa-solid fa-chevron-up"></i>
     </button>
 
-    <!-- Footer minimalista -->
     <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800/80 mt-auto py-12 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center mb-4 md:mb-0">
@@ -299,25 +286,33 @@
         </div>
     </footer>
 
-    <!-- A Lógica Central da Aplicação -->
     <script>
-        // API Base
         const API_BASE = 'https://api.enem.dev/v1';
         let currentYearData =[];
         let isFetching = false;
 
-        // Configuração do motor de Markdown para entender quebras de linha e tabelas (GFM)
+        // =========================================================================
+        // INTERCEPTADOR CUSTOMIZADO DE IMAGENS DO MARKDOWN
+        // Força TODA imagem processada pelo Marked a usar a nossa classe blindada
+        // =========================================================================
+        const customRenderer = new marked.Renderer();
+        customRenderer.image = function(href, title, text) {
+            let url = href;
+            // Correção caso a API envie uma imagem sem protocolo (ex: //dominio.com/img.png)
+            if (url && url.startsWith('//')) url = 'https:' + url;
+            return `<img src="${url}" alt="${text || 'Imagem'}" title="${title || ''}" class="enem-image" loading="lazy">`;
+        };
+
         marked.setOptions({
+            renderer: customRenderer,
             breaks: true,
             gfm: true
         });
 
-        // Inicialização Principal
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
             loadFilters();
             
-            // Monitoramento do Scroll
             window.addEventListener('scroll', () => {
                 const btn = document.getElementById('btn-top');
                 if (window.scrollY > 500) {
@@ -333,13 +328,11 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
-            // Listeners de Busca
             document.getElementById('btn-search').addEventListener('click', triggerSearch);
             document.getElementById('filter-keyword').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') triggerSearch();
             });
             
-            // Controle dinâmico do container de Linguagens
             document.getElementById('filter-discipline').addEventListener('change', (e) => {
                 const langContainer = document.getElementById('language-container');
                 if (e.target.value === 'linguagens' || e.target.value === 'all') {
@@ -352,7 +345,6 @@
             });
         });
 
-        // Gerenciamento de Tema Claro/Escuro
         function initTheme() {
             const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             const icon = document.querySelector('#theme-toggle i');
@@ -373,16 +365,14 @@
             });
         }
 
-        // Puxa os anos reais disponíveis na API
         async function loadFilters() {
             try {
                 const res = await fetch(`${API_BASE}/exams`);
                 if(!res.ok) throw new Error();
                 const data = await res.json();
-                let years = [...new Set(data.map(e => e.year))].sort((a, b) => b - a);
+                let years =[...new Set(data.map(e => e.year))].sort((a, b) => b - a);
                 populateYears(years);
             } catch (e) {
-                console.warn("Usando fallback de anos devido a limite inicial de API");
                 populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]);
             }
         }
@@ -394,7 +384,6 @@
             if(years.length > 0) triggerSearch();
         }
 
-        // Disparador Principal
         function triggerSearch() {
             const year = document.getElementById('filter-year').value;
             const discipline = document.getElementById('filter-discipline').value;
@@ -403,12 +392,10 @@
             if(year) fetchAndRenderQuestions(year, discipline, language);
         }
 
-        // Motor de Extração de Dados (Paginação + Contenção de Rate Limit)
         async function fetchAndRenderQuestions(year, discipline, language) {
             if(isFetching) return;
             const container = document.getElementById('questions-container');
             
-            // Cache Inteligente: Se já baixou este ano, apenas refiltra localmente
             if (container.getAttribute('data-loaded-year') === year.toString() && currentYearData.length > 0) {
                 applyFiltersAndRender(discipline, language);
                 return;
@@ -426,7 +413,6 @@
                 while(hasMore) {
                     if (offset === 0) loaderText.innerHTML = `<i class="fa-solid fa-server fa-beat mr-3 text-blue-500"></i> Conectando à API Oficial...`;
 
-                    // limit=50 evita travamento do backend da API
                     const res = await fetch(`${API_BASE}/exams/${year}/questions?limit=50&offset=${offset}`);
                     if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
                     
@@ -442,7 +428,6 @@
                     
                     if (hasMore) {
                         offset += 50;
-                        // Delay vital de 1.1s (A API do ENEM só aceita 1 requisição por segundo)
                         await new Promise(resolve => setTimeout(resolve, 1100)); 
                     }
                 }
@@ -453,7 +438,6 @@
                 applyFiltersAndRender(discipline, language);
                 
             } catch (e) {
-                console.error("Critical Fetch Error:", e);
                 container.innerHTML = `
                     <div class="bg-red-50 dark:bg-red-900/10 border-2 border-red-200 dark:border-red-800/40 rounded-3xl p-8 sm:p-12 text-center fade-in shadow-sm mx-auto max-w-2xl">
                         <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 mb-6 text-red-500 dark:text-red-400">
@@ -472,24 +456,19 @@
             }
         }
 
-        // ========================================================================
-        // O CORAÇÃO DO SISTEMA: O PROTETOR DE MATEMÁTICA E RENDERIZADOR MARKDOWN
-        // ========================================================================
         function parseTextSafely(text) {
             if (!text || typeof text !== 'string') return '';
             
             const mathBlocks =[];
             let processed = text;
             
-            // Regexes rigorosas para extrair o LaTeX antes do Markdown quebrar as contrabarras e sublinhados
             const mathRegexes = [
-                /\$\$[\s\S]+?\$\$/g, // Equação em bloco $$ ... $$
-                /\\\[[\s\S]+?\\\]/g, // Equação em bloco \[ ... \]
-                /\$[\s\S]+?\$/g,     // Equação inline $ ... $
-                /\\\([\s\S]+?\\\)/g  // Equação inline \( ... \)
+                /\$\$[\s\S]+?\$\$/g, 
+                /\\\[[\s\S]+?\\\]/g, 
+                /\$[\s\S]+?\$/g,     
+                /\\\([\s\S]+?\\\)/g  
             ];
 
-            // 1. Extrai a matemática e a substitui por um código inviolável
             mathRegexes.forEach(regex => {
                 processed = processed.replace(regex, (match) => {
                     mathBlocks.push(match);
@@ -497,10 +476,8 @@
                 });
             });
 
-            // 2. Transforma o texto (agora sem matemática) usando Marked.js (Gera negritos, tabelas e transforma ![] em imagens)
             let html = marked.parse(processed);
 
-            // 3. Devolve a matemática exata para os lugares originais
             mathBlocks.forEach((block, index) => {
                 html = html.replace(`___MATH_BLOCK_SAFE_${index}___`, block);
             });
@@ -508,7 +485,6 @@
             return html;
         }
 
-        // Aplicador de Filtros na Memória
         function applyFiltersAndRender(discipline, language) {
             const keyword = document.getElementById('filter-keyword').value.toLowerCase().trim();
             let filtered = currentYearData;
@@ -523,7 +499,6 @@
                 }
             }
             
-            // Busca Full-Text avançada pegando todos os pedaços da questão
             if (keyword !== '') {
                 filtered = filtered.filter(q => {
                     const fullContext =[
@@ -543,7 +518,6 @@
             renderQuestionsHTML(filtered);
         }
 
-        // Construtor Visual de Cartões de Questão
         function renderQuestionsHTML(data) {
             const container = document.getElementById('questions-container');
             const emptyState = document.getElementById('empty-state');
@@ -560,13 +534,7 @@
             emptyState.classList.add('hidden');
             resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões do caderno.`;
 
-            // Dicionários Visuais
-            const discLabels = {
-                'ciencias-humanas': 'Ciências Humanas',
-                'ciencias-natureza': 'Ciências da Natureza',
-                'linguagens': 'Linguagens e Códigos',
-                'matematica': 'Matemática'
-            };
+            const discLabels = { 'ciencias-humanas': 'Ciências Humanas', 'ciencias-natureza': 'Ciências da Natureza', 'linguagens': 'Linguagens e Códigos', 'matematica': 'Matemática' };
             const discColors = {
                 'ciencias-humanas': 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800/50',
                 'ciencias-natureza': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/50',
@@ -574,7 +542,6 @@
                 'matematica': 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/50'
             };
 
-            // Processamento Individual de Cada Questão
             data.forEach((q, index) => {
                 let badgeText = discLabels[q.discipline] || (q.discipline ? q.discipline.toUpperCase() : 'GERAL');
                 let badgeColor = discColors[q.discipline] || 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
@@ -583,36 +550,34 @@
                     badgeText += ` <span class="opacity-70 font-medium ml-1 bg-white/50 dark:bg-black/20 px-1.5 py-0.5 rounded text-[10px] uppercase">${q.language === 'ingles' ? 'Inglês' : 'Espanhol'}</span>`;
                 }
 
-                // 1. Textos Base (TEXTO I, Artigos, etc) processados com perfeição via Marked
-                let contextHtml = '';
-                if (q.context) {
-                    contextHtml = `<div class="prose dark:prose-invert max-w-none mb-6">${parseTextSafely(q.context)}</div>`;
-                }
+                // Texto Base
+                let contextHtml = q.context ? `<div class="prose dark:prose-invert max-w-none mb-6">${parseTextSafely(q.context)}</div>` : '';
                 
-                // 2. Gráficos/Imagens Anexas
+                // Imagens soltas do Array "Files" (Aplicada a mesma classe enem-image blindada)
                 let filesHtml = '';
                 if (q.files && q.files.length > 0) {
-                    filesHtml = `<div class="mb-8 p-6 bg-gray-50 dark:bg-gray-800/30 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex flex-col items-center justify-center gap-6 shadow-inner">`;
+                    filesHtml = `<div class="mb-8 p-4 sm:p-6 bg-gray-50 dark:bg-gray-800/30 rounded-2xl border border-gray-100 dark:border-gray-700/60 flex flex-col items-center justify-center gap-4 shadow-inner w-full overflow-x-auto">`;
                     q.files.forEach(imgUrl => {
-                        filesHtml += `<img src="${imgUrl}" class="max-w-full h-auto rounded-lg shadow-sm bg-white p-2 border border-gray-200 dark:border-gray-700" loading="lazy" alt="Imagem da Questão">`;
+                        let url = imgUrl.startsWith('//') ? 'https:' + imgUrl : imgUrl;
+                        filesHtml += `<img src="${url}" class="enem-image !m-0" loading="lazy" alt="Imagem Auxiliar da Questão">`;
                     });
                     filesHtml += `</div>`;
                 }
 
-                // 3. O Enunciado Oculto (A pergunta final do ENEM)
+                // O Enunciado Oculto
                 let statementHtml = '';
                 if (q.alternativesIntroduction) {
-                    // Adicionamos a classe font-bold na tag P interna gerada pelo Markdown
                     let parsedStmt = parseTextSafely(q.alternativesIntroduction);
-                    // Um hack elegante via CSS inline para garantir que o enunciado chame a atenção
                     statementHtml = `<div class="prose dark:prose-invert max-w-none mb-8 font-bold text-gray-900 dark:text-gray-100 border-l-4 border-primary pl-4 py-1 bg-blue-50/50 dark:bg-blue-900/10 rounded-r-lg">${parsedStmt}</div>`;
                 }
 
-                // 4. Alternativas Dinâmicas (Letra + Texto formatado + Imagens eventuais)
+                // Alternativas com Imagens (Também forçadas na regra .enem-image)
                 let altsHtml = `<div class="space-y-3 font-sans">`;
                 if (q.alternatives && q.alternatives.length > 0) {
                     q.alternatives.forEach(alt => {
                         let altParsedHTML = alt.text ? parseTextSafely(alt.text) : '';
+                        let altImageUrl = alt.file ? (alt.file.startsWith('//') ? 'https:' + alt.file : alt.file) : null;
+                        
                         altsHtml += `
                             <div onclick="selectAlternative(this)" class="alternative-item group flex items-start p-4 sm:p-5 rounded-2xl border-2 border-gray-100 dark:border-gray-700/60 hover:bg-blue-50/50 dark:hover:bg-gray-800/50 hover:border-blue-200 dark:hover:border-gray-600 transition-all cursor-pointer select-none relative overflow-hidden" data-letter="${alt.letter}">
                                 
@@ -622,7 +587,7 @@
                                 
                                 <div class="flex-grow text-gray-800 dark:text-gray-200 text-[15px] sm:text-[16px] font-medium pt-1.5 prose dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed">
                                     ${altParsedHTML}
-                                    ${alt.file ? `<div class="mt-4 bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700 inline-block"><img src="${alt.file}" class="max-w-full h-auto rounded" loading="lazy" alt="Alternativa ${alt.letter}"></div>` : ''}
+                                    ${altImageUrl ? `<img src="${altImageUrl}" class="enem-image !mt-4 !mb-0" loading="lazy" alt="Alternativa ${alt.letter}">` : ''}
                                 </div>
                             </div>
                         `;
@@ -632,13 +597,11 @@
                 }
                 altsHtml += `</div>`;
 
-                // Montagem do Cartão
                 const card = document.createElement('article');
                 card.className = 'bg-white dark:bg-darkCard rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700/80 fade-in relative overflow-hidden';
                 card.style.animationDelay = `${Math.min(index * 0.05, 0.5)}s`;
                 
                 card.innerHTML = `
-                    <!-- Header da Questão -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 pb-5 border-b border-gray-100 dark:border-gray-800">
                         <h3 class="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white flex items-center tracking-tight">
                             <span class="bg-primary/10 text-primary w-10 h-10 rounded-xl flex items-center justify-center mr-4 text-sm font-bold shadow-sm">${q.index || '?'}</span>
@@ -654,19 +617,16 @@
                         </div>
                     </div>
                     
-                    <!-- Corpo Interpretado -->
                     <div class="question-body">
                         ${contextHtml}
                         ${filesHtml}
                         ${statementHtml}
                     </div>
                     
-                    <!-- Respostas -->
                     <div class="mt-2">
                         ${altsHtml}
                     </div>
                     
-                    <!-- Validação -->
                     <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end font-sans">
                         <button onclick="revealAnswer(this, '${q.correctAlternative || ''}')" class="bg-gray-900 hover:bg-black dark:bg-gray-800 dark:hover:bg-gray-700 text-white font-bold py-3.5 px-8 rounded-xl transition-all flex items-center shadow-md active:transform active:scale-95 group">
                             <i class="fa-solid fa-eye text-gray-400 group-hover:text-white mr-3 transition-colors"></i> Revelar Gabarito
@@ -676,13 +636,11 @@
                 container.appendChild(card);
             });
 
-            // O Toque Final: Invoca o MathJax para processar a matemática gerada no DOM
             if (window.MathJax && window.MathJax.typesetPromise) {
                 MathJax.typesetPromise().catch((err) => console.log('Erro no MathJax:', err.message));
             }
         }
 
-        // Funções Auxiliares Visuais
         function escapeHtml(unsafe) {
             if (!unsafe) return '';
             return unsafe
@@ -738,7 +696,6 @@
                 
                 if (isSelected) hasSelection = true;
                 
-                // Quebra classes de hover
                 alt.classList.remove('hover:bg-blue-50/50', 'dark:hover:bg-gray-800/50', 'hover:border-blue-200', 'dark:hover:border-gray-600', 'cursor-pointer');
                 alt.classList.add('cursor-default');
                 circle.classList.remove('group-hover:bg-white', 'dark:group-hover:bg-gray-700', 'group-hover:text-primary');
@@ -764,7 +721,6 @@
                 }
             });
             
-            // Botão de feedback inteligente
             btn.classList.remove('bg-gray-900', 'hover:bg-black', 'dark:bg-gray-800', 'dark:hover:bg-gray-700', 'text-white');
             btn.classList.add('cursor-not-allowed', 'shadow-none');
             
@@ -787,14 +743,10 @@
             const emptyState = document.getElementById('empty-state');
             
             if (show) {
-                loader.classList.remove('hidden');
-                loader.classList.add('flex');
-                container.classList.add('hidden');
-                emptyState.classList.add('hidden');
+                loader.classList.remove('hidden'); loader.classList.add('flex');
+                container.classList.add('hidden'); emptyState.classList.add('hidden');
             } else {
-                loader.classList.add('hidden');
-                loader.classList.remove('flex');
-                container.classList.remove('hidden');
+                loader.classList.add('hidden'); loader.classList.remove('flex'); container.classList.remove('hidden');
             }
         }
     </script>
