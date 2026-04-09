@@ -38,7 +38,7 @@
     <script>
         window.MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
+                inlineMath: [['$', '$'],['\\(', '\\)']]
             },
             svg: {
                 fontCache: 'global'
@@ -109,7 +109,7 @@
         </div>
     </nav>
 
-    <!-- Header / Banner (Apenas Desktop) -->
+    <!-- Header / Banner -->
     <header class="bg-primary text-white py-12 relative overflow-hidden rounded-2xl mx-4 sm:mx-6 lg:mx-auto max-w-7xl mt-6 shadow-xl hidden md:block">
         <div class="absolute inset-0 opacity-10 flex flex-wrap gap-12 justify-center items-center pointer-events-none text-6xl select-none">
             <i class="fa-solid fa-calculator"></i>
@@ -215,30 +215,36 @@
                 </div>
             </div>
 
-            <!-- Loader (Skeleton) -->
-            <div id="loader" class="hidden space-y-6">
-                <!-- Gera 3 skeletons -->
-                <script>
-                    for(let i=0; i<3; i++) {
-                        document.write(`
-                        <div class="bg-white dark:bg-darkCard rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 w-full mb-6">
-                            <div class="flex justify-between items-center mb-6">
-                                <div class="skeleton h-7 w-2/4 rounded-lg"></div>
-                                <div class="skeleton h-6 w-24 rounded-full"></div>
-                            </div>
-                            <div class="skeleton h-4 w-full rounded mb-3"></div>
-                            <div class="skeleton h-4 w-full rounded mb-3"></div>
-                            <div class="skeleton h-4 w-3/4 rounded mb-8"></div>
-                            <div class="space-y-4">
-                                <div class="skeleton h-14 w-full rounded-xl"></div>
-                                <div class="skeleton h-14 w-full rounded-xl"></div>
-                                <div class="skeleton h-14 w-full rounded-xl"></div>
-                                <div class="skeleton h-14 w-full rounded-xl"></div>
-                                <div class="skeleton h-14 w-full rounded-xl"></div>
-                            </div>
-                        </div>`);
-                    }
-                </script>
+            <!-- Loader Progressivo (Skeleton) -->
+            <div id="loader" class="hidden flex-col items-center py-6 w-full fade-in">
+                <div class="text-center mb-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl w-full border border-blue-100 dark:border-blue-800/30">
+                    <h3 class="text-xl font-bold text-primary dark:text-blue-400 mb-2" id="loader-text">
+                        <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API...
+                    </h3>
+                    <p class="text-blue-600 dark:text-blue-300 text-sm">Estamos baixando as questões com cuidado para respeitar os limites do servidor. Por favor, aguarde.</p>
+                </div>
+                
+                <div class="w-full space-y-6">
+                    <script>
+                        for(let i=0; i<2; i++) {
+                            document.write(`
+                            <div class="bg-white dark:bg-darkCard rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 w-full mb-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <div class="skeleton h-7 w-2/4 rounded-lg"></div>
+                                    <div class="skeleton h-6 w-24 rounded-full"></div>
+                                </div>
+                                <div class="skeleton h-4 w-full rounded mb-3"></div>
+                                <div class="skeleton h-4 w-full rounded mb-3"></div>
+                                <div class="skeleton h-4 w-3/4 rounded mb-8"></div>
+                                <div class="space-y-4">
+                                    <div class="skeleton h-14 w-full rounded-xl"></div>
+                                    <div class="skeleton h-14 w-full rounded-xl"></div>
+                                    <div class="skeleton h-14 w-full rounded-xl"></div>
+                                </div>
+                            </div>`);
+                        }
+                    </script>
+                </div>
             </div>
 
             <!-- Container das Questões -->
@@ -283,12 +289,10 @@
         let currentYearData =[];
         let isFetching = false;
 
-        // Configuração Inicial e Eventos
         document.addEventListener('DOMContentLoaded', () => {
             initTheme();
             loadFilters();
             
-            // Scroll to Top Listener
             window.addEventListener('scroll', () => {
                 const btn = document.getElementById('btn-top');
                 if (window.scrollY > 400) {
@@ -304,15 +308,11 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
-            // Botão de Busca
             document.getElementById('btn-search').addEventListener('click', triggerSearch);
-            
-            // Submeter com a tecla Enter no input de busca
             document.getElementById('filter-keyword').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') triggerSearch();
             });
             
-            // Dinamismo do dropdown de Idioma
             document.getElementById('filter-discipline').addEventListener('change', (e) => {
                 const langContainer = document.getElementById('language-container');
                 if (e.target.value === 'linguagens' || e.target.value === 'all') {
@@ -325,7 +325,6 @@
             });
         });
 
-        // Alternância de Tema (Dark/Light)
         function initTheme() {
             const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
             const icon = document.querySelector('#theme-toggle i');
@@ -351,7 +350,6 @@
             });
         }
 
-        // Carrega os anos disponíveis a partir da API
         async function loadFilters() {
             const yearSelect = document.getElementById('filter-year');
             try {
@@ -359,14 +357,12 @@
                 if(!res.ok) throw new Error('Falha ao carregar provas da API');
                 const data = await res.json();
                 
-                // Extrai anos únicos ordenados do mais recente ao mais antigo
-                let years = [...new Set(data.map(e => e.year))].sort((a, b) => b - a);
+                let years =[...new Set(data.map(e => e.year))].sort((a, b) => b - a);
                 if (years.length === 0) throw new Error('Nenhum ano encontrado');
                 
                 populateYears(years);
             } catch (e) {
-                console.warn("Erro ao buscar filtros na API principal. Usando fallback de anos.", e);
-                // Fallback seguro em caso de rate limit inicial
+                console.warn("Erro ao buscar filtros. Usando fallback de anos.", e);
                 populateYears([2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015]);
             }
         }
@@ -378,7 +374,6 @@
                 yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
             });
             
-            // Dispara busca inicial
             if(years.length > 0) {
                 triggerSearch();
             }
@@ -394,14 +389,13 @@
             }
         }
 
-        // Faz o fetch das questões daquele ano, garantindo salvar na memória para não gastar API atoa
         async function fetchAndRenderQuestions(year, discipline, language) {
             if(isFetching) return;
             
             const container = document.getElementById('questions-container');
             const currentLoadedYear = container.getAttribute('data-loaded-year');
             
-            // Se o ano já estiver carregado em memória, apenas filtramos localmente
+            // Reutiliza cache do mesmo ano sem bater na API
             if (currentLoadedYear === year.toString() && currentYearData.length > 0) {
                 applyFiltersAndRender(discipline, language);
                 return;
@@ -409,17 +403,48 @@
 
             isFetching = true;
             showLoader(true);
+            currentYearData =[];
             
             try {
-                // A API possui o parâmetro limit. Como o Enem tem 180 questões, passamos limit=200
-                const res = await fetch(`${API_BASE}/exams/${year}/questions?limit=200`);
-                if(!res.ok) throw new Error('A API retornou erro');
+                let offset = 0;
+                let hasMore = true;
+                const loaderText = document.getElementById('loader-text');
                 
-                const data = await res.json();
-                currentYearData = data.questions || data.data || (Array.isArray(data) ? data :[]);
-                
+                // Sistema de Paginação para evitar Rate Limit e Erro 400 (Limite Muito Alto)
+                while(hasMore) {
+                    if (offset === 0) {
+                        loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Conectando à API...`;
+                    }
+
+                    // Limite seguro de 50 previne erros 400 do servidor
+                    const res = await fetch(`${API_BASE}/exams/${year}/questions?limit=50&offset=${offset}`);
+                    if (!res.ok) {
+                        const err = await res.text();
+                        throw new Error(`A API negou a requisição (${res.status}). Detalhes: ${err}`);
+                    }
+                    
+                    const data = await res.json();
+                    const pageQuestions = data.questions || data.data || (Array.isArray(data) ? data :[]);
+                    currentYearData.push(...pageQuestions);
+                    
+                    const total = data.total || '?';
+                    loaderText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Baixando questões... (${currentYearData.length}/${total})`;
+                    
+                    hasMore = data.hasMore || (data.metadata && data.metadata.hasMore);
+                    
+                    if (hasMore === undefined) {
+                        hasMore = pageQuestions.length >= 50; 
+                    }
+                    
+                    if (hasMore) {
+                        offset += 50;
+                        // Delay de 1200ms para respeitar o Rate Limit rígido de 1 requisição/s da API
+                        await new Promise(resolve => setTimeout(resolve, 1200));
+                    }
+                }
+
                 if (currentYearData.length === 0) {
-                    throw new Error("A API retornou 0 questões.");
+                    throw new Error("A API não retornou nenhuma questão para este ano.");
                 }
 
                 container.setAttribute('data-loaded-year', year);
@@ -431,37 +456,33 @@
                     <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-8 rounded-2xl border border-red-200 dark:border-red-800/30 text-center fade-in shadow-sm">
                         <i class="fa-solid fa-triangle-exclamation text-5xl mb-5 opacity-90"></i>
                         <h3 class="text-2xl font-bold mb-3 text-red-700 dark:text-red-300">Não foi possível carregar as questões</h3>
-                        <p class="mb-6 max-w-lg mx-auto text-red-600/80 dark:text-red-400/80">A API pública de dados do ENEM pode estar passando por manutenção ou seu limite de requisições foi atingido. Aguarde alguns segundos e tente novamente.</p>
+                        <p class="mb-6 max-w-lg mx-auto text-red-600/80 dark:text-red-400/80">Ocorreu um erro na conexão: ${e.message}</p>
                         <button onclick="triggerSearch()" class="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md">
                             <i class="fa-solid fa-rotate-right mr-2"></i> Tentar Novamente
                         </button>
                     </div>
                 `;
-                container.setAttribute('data-loaded-year', ''); // Limpa o ano para forçar refetch
+                container.setAttribute('data-loaded-year', '');
             } finally {
                 showLoader(false);
                 isFetching = false;
             }
         }
 
-        // Aplica os filtros de interface (Matéria, Idioma, e Texto/Conteúdo) sobre os dados carregados
         function applyFiltersAndRender(discipline, language) {
             const keyword = document.getElementById('filter-keyword').value.toLowerCase();
             let filtered = currentYearData;
             
-            // Filtro de Matéria
             if (discipline !== 'all') {
                 filtered = filtered.filter(q => q.discipline === discipline);
             }
             
-            // Filtro de Idioma (Somente aplica se for provas de linguagens ou todas)
             if (discipline === 'all' || discipline === 'linguagens') {
                 if (language !== 'all') {
                     filtered = filtered.filter(q => !q.language || q.language === language);
                 }
             }
             
-            // Filtro de Conteúdo/Palavra-chave
             if (keyword.trim() !== '') {
                 filtered = filtered.filter(q => {
                     const contextText = (q.context || '').toLowerCase();
@@ -475,7 +496,6 @@
             renderQuestionsHTML(filtered);
         }
 
-        // Utilitário para evitar Injeção de Código, mas manter segurança
         function escapeHtml(unsafe) {
             if (!unsafe) return '';
             return unsafe
@@ -486,7 +506,6 @@
                  .replace(/'/g, "&#039;");
         }
 
-        // Responsável por desenhar as questões na tela com excelência
         function renderQuestionsHTML(data) {
             const container = document.getElementById('questions-container');
             const emptyState = document.getElementById('empty-state');
@@ -503,13 +522,13 @@
             emptyState.classList.add('hidden');
             resultsCount.innerHTML = `Exibindo <span class="font-bold text-primary">${data.length}</span> questões encontradas.`;
 
-            // Dicionários para estética das badgs
             const discLabels = {
                 'ciencias-humanas': 'Ciências Humanas',
                 'ciencias-natureza': 'Ciências da Natureza',
                 'linguagens': 'Linguagens e Códigos',
                 'matematica': 'Matemática'
             };
+            
             const discColors = {
                 'ciencias-humanas': 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800/50',
                 'ciencias-natureza': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/50',
@@ -525,14 +544,11 @@
                     badgeText += ` <span class="opacity-75 font-normal ml-1">(${q.language === 'ingles' ? 'Inglês' : 'Espanhol'})</span>`;
                 }
 
-                // Processamento do Contexto
                 let contextHtml = '';
                 if (q.context) {
-                    // O Tailwind whitespace-pre-wrap cuidará de quebras de linha
                     contextHtml = `<p class="text-gray-800 dark:text-gray-200 mb-5 leading-relaxed whitespace-pre-wrap text-[15px] sm:text-base">${escapeHtml(q.context)}</p>`;
                 }
                 
-                // Imagens do Contexto
                 let filesHtml = '';
                 if (q.files && q.files.length > 0) {
                     filesHtml = `<div class="mb-6 flex flex-col items-center gap-4 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-100 dark:border-gray-800">`;
@@ -542,7 +558,6 @@
                     filesHtml += `</div>`;
                 }
 
-                // Alternativas
                 let altsHtml = `<div class="space-y-3 mt-6">`;
                 if (q.alternatives && q.alternatives.length > 0) {
                     q.alternatives.forEach(alt => {
@@ -563,10 +578,8 @@
                 }
                 altsHtml += `</div>`;
 
-                // Construção Final do Card
                 const card = document.createElement('article');
                 card.className = 'bg-white dark:bg-darkCard rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-800 fade-in';
-                // Adicionamos um delay progressivo para animação em cascata (max 10 itens para não bugar o css)
                 card.style.animationDelay = `${Math.min(index * 0.05, 0.5)}s`;
                 
                 card.innerHTML = `
@@ -601,19 +614,15 @@
                 container.appendChild(card);
             });
 
-            // Re-renderizar equações matemáticas caso existam no texto do ENEM
             if (window.MathJax) {
                 MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err.message));
             }
         }
 
-        // Interação de Clique na Alternativa
         window.selectAlternative = function(element) {
             const card = element.closest('.fade-in');
-            // Se a resposta já foi revelada, desabilitar seleção
             if (card.hasAttribute('data-revealed')) return;
             
-            // Limpa seleções anteriores
             const alts = card.querySelectorAll('.alternative-item');
             alts.forEach(a => {
                 a.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
@@ -625,7 +634,6 @@
                 circle.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
             });
             
-            // Adiciona seleção na atual
             element.classList.remove('border-gray-100', 'dark:border-gray-700/60');
             element.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
             element.setAttribute('data-selected', 'true');
@@ -635,7 +643,6 @@
             circle.classList.add('bg-primary', 'text-white', 'border-primary');
         };
 
-        // Revelar Gabarito
         window.revealAnswer = function(btn, correctLetter) {
             const card = btn.closest('.fade-in');
             if (card.hasAttribute('data-revealed')) return;
@@ -660,12 +667,10 @@
                 
                 if (isSelected) hasSelection = true;
                 
-                // Reseta classes visuais de hover/borda normal
                 alt.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20', 'hover:bg-gray-50', 'dark:hover:bg-gray-800/50', 'cursor-pointer');
                 alt.classList.add('cursor-default');
                 
                 if (letter === correctLetter) {
-                    // Certa
                     alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
                     alt.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
                     
@@ -675,7 +680,6 @@
                     
                     if (isSelected) userSelectedCorrectly = true;
                 } else if (isSelected) {
-                    // Errada Selecionada
                     alt.classList.remove('border-gray-100', 'dark:border-gray-700/60');
                     alt.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
                     
@@ -683,12 +687,10 @@
                     circle.classList.add('bg-red-500', 'text-white', 'border-red-500');
                     circle.innerHTML = '<i class="fa-solid fa-xmark"></i>';
                 } else {
-                    // Outras
                     alt.classList.add('opacity-40');
                 }
             });
             
-            // Feedback no Botão
             btn.classList.remove('hover:bg-gray-100', 'dark:hover:bg-gray-700', 'bg-gray-50', 'dark:bg-gray-800');
             if (!hasSelection) {
                 btn.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200', 'dark:bg-blue-900/30', 'dark:text-blue-300', 'dark:border-blue-800');
@@ -705,7 +707,6 @@
             btn.classList.add('cursor-not-allowed');
         };
 
-        // Gerencia visibilidade do Loader vs Container
         function showLoader(show) {
             const loader = document.getElementById('loader');
             const container = document.getElementById('questions-container');
@@ -713,10 +714,12 @@
             
             if (show) {
                 loader.classList.remove('hidden');
+                loader.classList.add('flex');
                 container.classList.add('hidden');
                 emptyState.classList.add('hidden');
             } else {
                 loader.classList.add('hidden');
+                loader.classList.remove('flex');
                 container.classList.remove('hidden');
             }
         }
