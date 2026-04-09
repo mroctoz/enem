@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="antialiased">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco de Questões ENEM MAX</title>
+    <title>ENEM DB - GitHub Repositories</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,12 +13,19 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#2563eb',
-                        darkBg: '#0f172a',
-                        darkCard: '#1e293b'
+                        ghBg: '#0d1117',
+                        ghCard: '#161b22',
+                        ghBorder: '#30363d',
+                        ghText: '#c9d1d9',
+                        ghMuted: '#8b949e',
+                        ghBlue: '#58a6ff',
+                        ghGreen: '#238636',
+                        ghGreenHover: '#2ea043',
+                        ghRed: '#f85149'
                     },
                     fontFamily: {
-                        sans:['Inter', 'system-ui', 'sans-serif'],
+                        sans:['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
+                        mono:['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', 'monospace']
                     }
                 }
             }
@@ -28,267 +35,389 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- MathJax (Para equações matemáticas do ENEM) -->
+    <!-- MathJax para Equações Complexas do ENEM -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            startup: { typeset: false } // Nós disparamos manualmente após o render
+        };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        /* Scrollbar Elegante */
+        /* Custom Scrollbar similar ao GitHub */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
         }
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: #0d1117;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+            background: #30363d;
+            border-radius: 5px;
+            border: 2px solid #0d1117;
         }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
-
-        /* Radio Buttons Customizados (Puramente CSS) */
-        .options-container input[type="radio"] {
-            appearance: none;
-            background-color: #f8fafc;
-            margin: 0;
-            font: inherit;
-            color: currentColor;
-            width: 1.25em;
-            height: 1.25em;
-            border: 0.15em solid #cbd5e1;
-            border-radius: 50%;
-            display: grid;
-            place-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-        .options-container input[type="radio"]::before {
-            content: "";
-            width: 0.65em;
-            height: 0.65em;
-            border-radius: 50%;
-            transform: scale(0);
-            transition: 120ms transform ease-in-out;
-            box-shadow: inset 1em 1em #2563eb;
-        }
-        .options-container input[type="radio"]:checked {
-            border-color: #2563eb;
-        }
-        .options-container input[type="radio"]:checked::before {
-            transform: scale(1);
-        }
-        .dark .options-container input[type="radio"] {
-            background-color: #1e293b;
-            border-color: #475569;
-        }
-        .dark .options-container input[type="radio"]:checked {
-            border-color: #3b82f6;
-        }
-        .dark .options-container input[type="radio"]::before {
-            box-shadow: inset 1em 1em #3b82f6;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
         }
 
-        /* Classes de Revelação de Gabarito */
+        /* Animações e UI states */
+        .github-radio:checked + div {
+            background-color: #1f6feb;
+            border-color: #1f6feb;
+        }
+        
         .show-results .correct-option {
-            background-color: #ecfdf5 !important;
-            border-color: #10b981 !important;
+            background-color: rgba(46, 160, 67, 0.1) !important;
+            border-color: #2ea043 !important;
         }
-        .dark .show-results .correct-option {
-            background-color: rgba(16, 185, 129, 0.1) !important;
-            border-color: #059669 !important;
-        }
-        .show-results .correct-option .option-text,
-        .show-results .correct-option .option-letter {
-            color: #065f46 !important;
+        .show-results .correct-option .option-label,
+        .show-results .correct-option .option-text {
+            color: #3fb950 !important;
             font-weight: 600;
-        }
-        .dark .show-results .correct-option .option-text,
-        .dark .show-results .correct-option .option-letter {
-            color: #34d399 !important;
         }
         
         .show-results .wrong-selected {
-            background-color: #fef2f2 !important;
-            border-color: #ef4444 !important;
+            background-color: rgba(248, 81, 73, 0.1) !important;
+            border-color: #f85149 !important;
         }
-        .dark .show-results .wrong-selected {
-            background-color: rgba(239, 68, 68, 0.1) !important;
-            border-color: #b91c1c !important;
-        }
-        .show-results .wrong-selected .option-text,
-        .show-results .wrong-selected .option-letter {
-            color: #991b1b !important;
-        }
-        .dark .show-results .wrong-selected .option-text,
-        .dark .show-results .wrong-selected .option-letter {
-            color: #f87171 !important;
+        .show-results .wrong-selected .option-label,
+        .show-results .wrong-selected .option-text {
+            color: #ff7b72 !important;
         }
 
         .checkbox-custom:checked + div {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
+            background-color: #1f6feb;
+            border-color: #1f6feb;
         }
         .checkbox-custom:checked + div i {
             display: block;
         }
+
+        .terminal-blink::after {
+            content: '█';
+            animation: blink 1s step-start infinite;
+            color: #8b949e;
+            margin-left: 4px;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-100 h-screen overflow-hidden flex transition-colors duration-300">
+<body class="bg-ghBg text-ghText font-sans h-screen overflow-hidden flex selection:bg-ghBlue selection:text-white">
 
-    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity lg:hidden"></div>
+    <!-- Overlay Mobile -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-black/70 z-40 hidden transition-opacity lg:hidden backdrop-blur-sm"></div>
 
     <!-- Sidebar de Filtros -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-darkCard shadow-xl transform -translate-x-full transition-transform duration-300 lg:relative lg:translate-x-0 flex flex-col h-full border-r border-gray-200 dark:border-gray-800">
-        <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800/50">
-            <h1 class="text-xl font-black text-blue-600 dark:text-blue-400 flex items-center gap-3">
-                <i class="fa-solid fa-graduation-cap text-2xl"></i> ENEM Max
-            </h1>
-            <button id="close-sidebar" class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 text-xl">
-                <i class="fa-solid fa-xmark"></i>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-ghCard border-r border-ghBorder flex flex-col transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:relative h-full shadow-2xl">
+        <div class="p-6 border-b border-ghBorder flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-3 text-ghText">
+                    <i class="fa-brands fa-github text-2xl text-white"></i>
+                    ENEM <span class="text-ghBlue">DataHub</span>
+                </h1>
+                <p class="text-[11px] text-ghMuted mt-1.5 font-mono">/datasets/brazilian-exams</p>
+            </div>
+            <button id="close-sidebar" class="lg:hidden text-ghMuted hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
 
-        <div class="p-6 flex-1 overflow-y-auto">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2 uppercase tracking-wide">
-                    <i class="fa-solid fa-filter text-blue-500"></i> Filtros
+        <div class="p-5 flex-1 overflow-y-auto">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-sm font-semibold text-ghText flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-ghMuted"></i> Filtros Ativos
                 </h2>
-                <button id="clear-filters" class="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 font-bold hidden px-2 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-lg transition-colors">
-                    Limpar
-                </button>
+                <button id="clear-filters" class="text-xs text-ghBlue hover:underline hidden font-medium">Limpar</button>
             </div>
             
-            <div class="mb-8">
-                <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3"><i class="fa-regular fa-calendar mr-1"></i> Ano</h3>
-                <div id="filter-years" class="space-y-2">
-                    <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
-                    <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+            <div class="mb-7">
+                <h3 class="text-[11px] font-bold text-ghMuted uppercase tracking-wider mb-3 font-mono">Ano de Aplicação</h3>
+                <div id="filter-years" class="space-y-1">
+                    <div class="animate-pulse h-5 bg-ghBorder rounded w-full mb-2"></div>
                 </div>
             </div>
             
-            <div class="mb-6">
-                <h3 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3"><i class="fa-solid fa-book-open mr-1"></i> Matéria</h3>
-                <div id="filter-disciplines" class="space-y-2">
-                    <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
-                    <div class="animate-pulse h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+            <div class="mb-7">
+                <h3 class="text-[11px] font-bold text-ghMuted uppercase tracking-wider mb-3 font-mono">Área do Conhecimento</h3>
+                <div id="filter-disciplines" class="space-y-1">
+                    <div class="animate-pulse h-5 bg-ghBorder rounded w-full mb-2"></div>
                 </div>
             </div>
         </div>
         
-        <div class="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-            <div class="text-[10px] text-center text-gray-400 dark:text-gray-500 font-medium">
-                <i class="fa-solid fa-shield-check mr-1 text-green-500"></i> Bypass CORS Habilitado.
+        <div class="p-4 border-t border-ghBorder bg-[#0d1117]">
+            <div class="text-[10px] text-ghMuted font-mono flex items-center justify-center gap-2">
+                <i class="fa-solid fa-circle text-ghGreen text-[8px]"></i> Raw GitHub Fetcher Ativo
             </div>
         </div>
     </aside>
 
-    <!-- Conteúdo Central -->
-    <main class="flex-1 flex flex-col h-full min-w-0">
-        <header class="bg-white dark:bg-darkCard shadow-sm z-10 px-4 sm:px-6 py-4 flex justify-between items-center transition-colors duration-300 border-b border-gray-200 dark:border-gray-800">
-            <div class="flex items-center gap-4 w-full">
-                <button id="menu-toggle" class="lg:hidden text-gray-500 hover:text-blue-600 focus:outline-none text-xl">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                
-                <div class="relative w-full max-w-2xl">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                        <i class="fa-solid fa-search"></i>
-                    </span>
-                    <input type="text" id="search-input" placeholder="Pesquisar termo na questão..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-medium">
-                </div>
-            </div>
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 flex flex-col min-w-0 relative bg-ghBg">
+        
+        <!-- Header Superior -->
+        <header class="h-16 flex items-center px-4 sm:px-6 border-b border-ghBorder bg-ghCard/95 backdrop-blur z-10 shrink-0">
+            <button id="menu-toggle" class="lg:hidden text-ghMuted hover:text-white mr-4 transition-colors">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
             
-            <div class="flex items-center ml-4 shrink-0">
-                <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-full transition-colors text-lg" aria-label="Alternar tema">
-                    <i class="fa-solid fa-moon"></i>
-                </button>
+            <div class="relative w-full max-w-2xl flex items-center">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 text-ghMuted text-sm"></i>
+                <input type="text" id="search-input" placeholder="Pesquisar termo no banco de dados..." class="w-full pl-9 pr-4 py-1.5 bg-ghBg border border-ghBorder rounded-md text-sm text-ghText placeholder-ghMuted focus:outline-none focus:border-ghBlue focus:ring-1 focus:ring-ghBlue transition-all">
             </div>
         </header>
 
-        <div class="bg-blue-50 dark:bg-blue-900/20 px-6 py-2.5 flex justify-between items-center text-xs font-semibold text-blue-800 dark:text-blue-300 border-b border-blue-100 dark:border-blue-800/50">
-            <span id="results-stats">Carregando dados...</span>
-            <span id="source-status" class="flex items-center gap-2">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> Testando rotas CORS...
-            </span>
+        <!-- Stats Bar -->
+        <div class="bg-[#010409] px-6 py-2 border-b border-ghBorder flex justify-between items-center text-[11px] font-mono text-ghMuted shrink-0">
+            <span id="results-stats">Aguardando extração...</span>
+            <span id="db-status" class="text-ghBlue"><i class="fa-solid fa-satellite-dish fa-fade mr-1"></i> Conectando...</span>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 dark:bg-[#0b1120]" id="scroll-area">
-            <div id="questions-container" class="max-w-4xl mx-auto pb-10">
-                <!-- Esqueletos de Carregamento -->
-                <div class="animate-pulse space-y-6">
-                    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6">
-                        <div class="flex gap-2 mb-4">
-                            <div class="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-                            <div class="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-                        </div>
-                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-3"></div>
-                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-8"></div>
+        <!-- Área de Rolagem -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scroll-smooth" id="scroll-area">
+            <div class="max-w-4xl mx-auto">
+                
+                <!-- Terminal de Status (O Segredo da Nova Estratégia) -->
+                <div id="terminal-container" class="bg-[#0d1117] border border-ghBorder rounded-lg p-4 font-mono text-[11px] sm:text-xs text-ghMuted mb-8 shadow-inner max-h-48 overflow-y-auto">
+                    <div class="text-ghBlue mb-2"><i class="fa-solid fa-terminal mr-2"></i>GitHub Repositories Aggregator v1.0</div>
+                    <div id="terminal-logs" class="space-y-1 terminal-blink"></div>
+                </div>
+
+                <div id="questions-container" class="space-y-6 pb-8">
+                    <!-- Skeletons (Carregando) -->
+                    <div class="animate-pulse bg-ghCard border border-ghBorder rounded-xl p-6">
+                        <div class="h-4 bg-ghBorder rounded w-1/4 mb-6"></div>
+                        <div class="h-3 bg-ghBorder rounded w-full mb-3"></div>
+                        <div class="h-3 bg-ghBorder rounded w-5/6 mb-8"></div>
                         <div class="space-y-3">
-                            <div class="h-14 bg-gray-100 dark:bg-slate-800/50 rounded-xl w-full border border-gray-200 dark:border-gray-700"></div>
-                            <div class="h-14 bg-gray-100 dark:bg-slate-800/50 rounded-xl w-full border border-gray-200 dark:border-gray-700"></div>
+                            <div class="h-10 bg-[#0d1117] rounded border border-ghBorder w-full"></div>
+                            <div class="h-10 bg-[#0d1117] rounded border border-ghBorder w-full"></div>
                         </div>
                     </div>
                 </div>
+                
+                <div id="pagination-container" class="pb-10"></div>
             </div>
-            
-            <div id="pagination-container" class="max-w-4xl mx-auto pb-8"></div>
         </div>
     </main>
 
+    <!-- MOTOR DE DADOS DO SITE -->
     <script>
         const state = {
             questions: [],
-            filteredQuestions:[],
+            filteredQuestions: [],
             filters: { year: [], discipline:[], search: '' },
             currentPage: 1,
             itemsPerPage: 10,
-            loading: true,
-            error: null
+            loading: true
         };
 
+        // Repositórios Brutos (RAW) de NLP/IA - Garantia anti-bloqueio
+        const GITHUB_SOURCES =[
+            { repo: 'viniciusarruda/llm-enem', file: 'enem_2022_0_shot.json', url: 'https://raw.githubusercontent.com/viniciusarruda/llm-enem/main/dataset/enem/enem_2022_0_shot.json', year: 2022 },
+            { repo: 'viniciusarruda/llm-enem', file: 'enem_2022_3_shot.json', url: 'https://raw.githubusercontent.com/viniciusarruda/llm-enem/main/dataset/enem/enem_2022_3_shot.json', year: 2022 },
+            { repo: 'piresramon/gpt-4-enem', file: '2023.json', url: 'https://raw.githubusercontent.com/piresramon/gpt-4-enem/main/data/ENEM_2023.json', year: 2023 },
+            // Fallback CDN Global caso a rede da empresa do usuário bloqueie o raw.githubusercontent.com
+            { repo: 'jsdelivr/viniciusarruda', file: 'fallback.json', url: 'https://cdn.jsdelivr.net/gh/viniciusarruda/llm-enem@main/dataset/enem/enem_2022_0_shot.json', year: 2022 }
+        ];
+
         document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            setupEventListeners();
-            loadExternalData();
+            setupUI();
+            executeGitHubExtraction();
         });
 
-        function initTheme() {
-            const toggle = document.getElementById('theme-toggle');
-            const html = document.documentElement;
-            const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        // ----------------------------------------------------------------
+        // 1. EXTRAÇÃO DESCENTRALIZADA E NORMALIZAÇÃO (A Nova Estratégia)
+        // ----------------------------------------------------------------
+        function log(msg, type = 'info') {
+            const logs = document.getElementById('terminal-logs');
+            let color = 'text-ghMuted';
+            if(type === 'success') color = 'text-[#3fb950]';
+            if(type === 'error') color = 'text-[#f85149]';
+            if(type === 'warn') color = 'text-[#d29922]';
             
-            if (isDark) {
-                html.classList.add('dark');
-                toggle.innerHTML = '<i class="fa-solid fa-sun text-yellow-400"></i>';
-            }
-
-            toggle.addEventListener('click', () => {
-                if (html.classList.contains('dark')) {
-                    html.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                    toggle.innerHTML = '<i class="fa-solid fa-moon text-gray-500"></i>';
-                } else {
-                    html.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                    toggle.innerHTML = '<i class="fa-solid fa-sun text-yellow-400"></i>';
-                }
-            });
+            const line = document.createElement('div');
+            line.className = color;
+            line.innerHTML = `> ${msg}`;
+            logs.appendChild(line);
+            
+            const container = document.getElementById('terminal-container');
+            container.scrollTop = container.scrollHeight;
         }
 
-        function setupEventListeners() {
+        async function executeGitHubExtraction() {
+            log('Iniciando pipeline de extração de dados brutos...');
+            const allExtractedQuestions =[];
+            const signatures = new Set(); // Para evitar duplicatas
+
+            // Executa o fetch de todos os repositórios paralelamente
+            const fetchPromises = GITHUB_SOURCES.map(async (src) => {
+                log(`[GET] ${src.repo} -> ${src.file}...`);
+                try {
+                    const response = await fetch(src.url, { cache: 'no-store' });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    
+                    const data = await response.json();
+                    log(`[SUCCESS] JSON decodificado de ${src.repo}`, 'success');
+                    
+                    const normalized = normalizeDataset(data, src.year);
+                    log(`[PARSER] ${normalized.length} questões estruturadas de ${src.file}.`);
+                    return normalized;
+
+                } catch (err) {
+                    log(`[SKIP] Falha ao acessar ${src.repo}/${src.file} (${err.message})`, 'warn');
+                    return[];
+                }
+            });
+
+            const results = await Promise.allSettled(fetchPromises);
+            
+            results.forEach(res => {
+                if (res.status === 'fulfilled') {
+                    res.value.forEach(q => {
+                        // Cria uma assinatura única para a questão (evita repetição entre repositórios)
+                        const sig = q.question.substring(0, 30).toLowerCase().replace(/[^a-z0-9]/g, '');
+                        if (!signatures.has(sig) && q.alternatives.length > 0) {
+                            signatures.add(sig);
+                            allExtractedQuestions.push(q);
+                        }
+                    });
+                }
+            });
+
+            state.loading = false;
+            document.getElementById('terminal-logs').classList.remove('terminal-blink');
+
+            if (allExtractedQuestions.length === 0) {
+                log('[CRITICAL ERROR] Nenhum repositório respondeu. Seu provedor ou firewall corporativo está bloqueando o GitHub.', 'error');
+                document.getElementById('db-status').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-ghRed"></i> Falha Total`;
+            } else {
+                log(`[COMPLETE] Banco de dados montado. Total: ${allExtractedQuestions.length} questões únicas.`, 'success');
+                state.questions = allExtractedQuestions;
+                state.filteredQuestions = [...allExtractedQuestions];
+                
+                document.getElementById('db-status').innerHTML = `<i class="fa-solid fa-check text-ghGreen"></i> Sistema Operante`;
+                document.getElementById('db-status').classList.replace('text-ghBlue', 'text-ghGreen');
+                
+                setTimeout(() => {
+                    document.getElementById('terminal-container').classList.add('hidden');
+                }, 4000); // Esconde o terminal após 4s de sucesso para limpar a UI
+
+                renderFilters();
+                renderQuestions();
+            }
+        }
+
+        // Função camaleão: Aceita quase qualquer formato JSON de IA e transforma no formato da UI
+        function normalizeDataset(jsonData, defaultYear) {
+            let extracted =[];
+            // O dataset pode ser um Array direto ou um Objeto (ex: {"q1": {...}, "q2": {...}})
+            let items = Array.isArray(jsonData) ? jsonData : Object.values(jsonData);
+            
+            // Tratamento caso venha envelopado
+            if (!Array.isArray(items) && items.questions) items = items.questions;
+            if (!Array.isArray(items) && items.data) items = items.data;
+
+            if(!Array.isArray(items)) return[];
+
+            items.forEach(item => {
+                if(!item || typeof item !== 'object') return;
+                
+                let qText = item.question || item.enunciado || item.text || item.statement || '';
+                if(typeof qText !== 'string' || qText.length < 10) return;
+                
+                let ctx = item.context || item.support_text || item.texto || item.intro || '';
+                let alternatives =[];
+                let correctFlag = item.answer ?? item.label ?? item.gabarito ?? item.correct;
+                let correctLetter = null;
+
+                if (typeof correctFlag === 'number') {
+                    correctLetter = String.fromCharCode(65 + correctFlag);
+                } else if (typeof correctFlag === 'string') {
+                    correctLetter = correctFlag.trim().toUpperCase();
+                }
+
+                // Tenta extrair das chaves "A", "B", "C", "D", "E"
+                ['A', 'B', 'C', 'D', 'E'].forEach((letter, idx) => {
+                    let optText = item[letter] || item[letter.toLowerCase()];
+                    if(optText) {
+                        alternatives.push({
+                            letter: letter,
+                            text: optText,
+                            isCorrect: (letter === correctLetter || correctFlag === idx)
+                        });
+                    }
+                });
+
+                // Se não encontrou, tenta procurar no array 'alternatives' ou 'options'
+                if(alternatives.length === 0) {
+                    const opts = item.alternatives || item.options ||[];
+                    opts.forEach((opt, idx) => {
+                        let l = String.fromCharCode(65 + idx);
+                        let t = typeof opt === 'string' ? opt : (opt.text || opt.body || '');
+                        alternatives.push({
+                            letter: l,
+                            text: t,
+                            isCorrect: (l === correctLetter || correctFlag === idx || opt.isCorrect)
+                        });
+                    });
+                }
+
+                if(alternatives.length < 2) return;
+
+                extracted.push({
+                    id: `git-${Math.random().toString(36).substring(2,10)}`,
+                    year: item.year || item.ano || defaultYear,
+                    discipline: inferDiscipline(item.discipline || item.area, qText),
+                    context: ctx,
+                    question: qText,
+                    alternatives: alternatives
+                });
+            });
+
+            return extracted;
+        }
+
+        // Caso o dataset não especifique a matéria, inferimos pelo texto
+        function inferDiscipline(rawDisc, text) {
+            const raw = String(rawDisc || '').toLowerCase();
+            const t = String(text || '').toLowerCase();
+            
+            if (raw.includes('natureza') || t.includes('biologia') || t.includes('física') || t.includes('química') || t.includes('energia')) return 'Ciências da Natureza';
+            if (raw.includes('humana') || t.includes('história') || t.includes('geografia') || t.includes('filosofia') || t.includes('século')) return 'Ciências Humanas';
+            if (raw.includes('linguagem') || t.includes('português') || t.includes('inglês') || t.includes('texto')) return 'Linguagens e Códigos';
+            if (raw.includes('matemática') || raw.includes('math') || t.includes('matemática') || t.includes('função')) return 'Matemática';
+            
+            return 'Conhecimentos Gerais';
+        }
+
+        function getDisciplineColor(disc) {
+            switch(disc) {
+                case 'Ciências da Natureza': return 'text-[#3fb950] border-[#3fb950]/30 bg-[#3fb950]/10';
+                case 'Ciências Humanas': return 'text-[#d29922] border-[#d29922]/30 bg-[#d29922]/10';
+                case 'Linguagens e Códigos': return 'text-[#a371f7] border-[#a371f7]/30 bg-[#a371f7]/10';
+                case 'Matemática': return 'text-[#58a6ff] border-[#58a6ff]/30 bg-[#58a6ff]/10';
+                default: return 'text-ghMuted border-ghBorder bg-[#0d1117]';
+            }
+        }
+
+        // ----------------------------------------------------------------
+        // 2. LÓGICA DE INTERFACE (Filtros, Renderização, Paginação)
+        // ----------------------------------------------------------------
+        function setupUI() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-overlay');
-
-            const toggleSidebar = () => {
+            
+            const toggle = () => {
                 sidebar.classList.toggle('-translate-x-full');
                 overlay.classList.toggle('hidden');
             };
 
-            document.getElementById('menu-toggle').addEventListener('click', toggleSidebar);
-            document.getElementById('close-sidebar').addEventListener('click', toggleSidebar);
-            overlay.addEventListener('click', toggleSidebar);
+            document.getElementById('menu-toggle').addEventListener('click', toggle);
+            document.getElementById('close-sidebar').addEventListener('click', toggle);
+            overlay.addEventListener('click', toggle);
 
             document.getElementById('search-input').addEventListener('input', (e) => {
                 state.filters.search = e.target.value.toLowerCase();
@@ -305,191 +434,38 @@
             });
         }
 
-        // =========================================================
-        // MOTOR BLINDADO DE FETCH (Bypass CORS, origin=null e 429)
-        // =========================================================
-        async function loadExternalData() {
-            // Estratégia de Múltiplos CDNs e Proxies CORS em Paralelo
-            // Isso garante que se um arquivo falhar por rate limit do Github ou CORS do SandBox, os outros preencherão a tela.
-            const datasets =[
-                // 1. JSDelivr: Perfeito para contornar origin="null". Retorna cabeçalho CORS aberto (*).
-                { url: 'https://cdn.jsdelivr.net/gh/viniciusarruda/llm-enem@main/dataset/enem/enem_2022_0_shot.json', type: 'json', year: 2022 },
-                // 2. AllOrigins Proxy encapsulando API pública do ENEM. Retorna o payload em um JSON seguro.
-                { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.enem.dev/v1/exams/2023/questions?limit=50'), type: 'json', year: 2023 },
-                // 3. AllOrigins Proxy encapsulando JSONL de Repositório do HuggingFace (Garante bypass do erro 429 local)
-                { url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://huggingface.co/datasets/maritaca-ai/enem/resolve/main/2023.jsonl'), type: 'jsonl', year: 2023 },
-                // 4. Fallback direto do Github Raw (Caso os Proxies fiquem offline, o Github salva).
-                { url: 'https://raw.githubusercontent.com/viniciusarruda/llm-enem/main/dataset/enem/enem_2022_3_shot.json', type: 'json', year: 2022 }
-            ];
+        function renderFilters() {
+            const years = new Set();
+            const disciplines = new Set();
 
-            let allQuestions =[];
-            const parsedSignatures = new Set();
-
-            // Dispara todos ao mesmo tempo. O que sobreviver aos firewalls alimenta o banco.
-            const fetchPromises = datasets.map(async (src) => {
-                try {
-                    const controller = new AbortController();
-                    const timeout = setTimeout(() => controller.abort(), 12000); // 12s limite
-                    
-                    const response = await fetch(src.url, { signal: controller.signal });
-                    clearTimeout(timeout);
-                    
-                    if (!response.ok) throw new Error(`Status ${response.status}`);
-
-                    let rawItems =[];
-                    if (src.type === 'jsonl') {
-                        const text = await response.text();
-                        rawItems = text.split('\n').map(l => l.trim()).filter(l => l.startsWith('{')).map(l => JSON.parse(l));
-                    } else {
-                        const json = await response.json();
-                        // Adaptação dinâmica ao corpo de resposta
-                        if (Array.isArray(json)) rawItems = json;
-                        else if (json.data && Array.isArray(json.data)) rawItems = json.data;
-                        else if (json.questions && Array.isArray(json.questions)) rawItems = json.questions;
-                        else if (json.contents) rawItems = JSON.parse(json.contents); // Caso um proxy faça envelopamento duplo
-                    }
-
-                    return normalizeData(rawItems, src.year);
-                } catch (err) {
-                    console.warn(`[Ignorado] Rota indisponível (${src.url}):`, err.message);
-                    return[];
-                }
+            state.questions.forEach(q => {
+                years.add(q.year);
+                disciplines.add(q.discipline);
             });
 
-            // Aguarda todas as requisições terminarem (com sucesso ou falha)
-            const results = await Promise.allSettled(fetchPromises);
-
-            results.forEach(res => {
-                if (res.status === 'fulfilled' && res.value.length > 0) {
-                    res.value.forEach(q => {
-                        // Proteção contra questões duplicadas de bases diferentes
-                        const signature = q.question.substring(0, 60).trim().toLowerCase();
-                        if (!parsedSignatures.has(signature)) {
-                            parsedSignatures.add(signature);
-                            allQuestions.push(q);
-                        }
-                    });
-                }
-            });
-
-            state.loading = false;
-
-            if (allQuestions.length === 0) {
-                state.error = "Nenhuma API respondeu. É possível que sua rede corporativa esteja bloqueando todas as saídas externas (Strict CSP). Tente usar uma aba comum do navegador fora de firewalls rigorosos.";
-            } else {
-                state.questions = allQuestions;
-                state.filteredQuestions = [...allQuestions];
-                extractAndRenderFilters(allQuestions);
-                
-                const statusEl = document.getElementById('source-status');
-                statusEl.innerHTML = `<i class="fa-solid fa-check-double text-green-500"></i> Sistema Online (${allQuestions.length} questões na memória cache)`;
-                statusEl.classList.replace('text-blue-800', 'text-green-800');
-                statusEl.classList.replace('dark:text-blue-300', 'dark:text-green-400');
-            }
-
-            renderQuestions();
-        }
-
-        // Normalizador Inteligente (Pega qualquer formato de JSON e transforma em Padrão)
-        function normalizeData(items, defaultYear) {
-            return items.map(item => {
-                try {
-                    let options = [];
-                    
-                    if (Array.isArray(item.alternatives) && item.alternatives[0]?.text) {
-                        options = item.alternatives.map((a, i) => ({
-                            letter: a.letter || String.fromCharCode(65 + i),
-                            text: a.text || a.body,
-                            isCorrect: a.isCorrect === true || a.is_correct === true || item.answer === a.letter
-                        }));
-                    } else if (Array.isArray(item.options)) {
-                        options = item.options.map((opt, i) => ({
-                            letter: String.fromCharCode(65 + i),
-                            text: opt,
-                            isCorrect: (item.answer === i || item.answer === String.fromCharCode(65 + i) || item.answer === opt)
-                        }));
-                    } else {['A', 'B', 'C', 'D', 'E'].forEach((l, i) => {
-                            const txt = item[l] || item[l.toLowerCase()];
-                            if (txt) {
-                                options.push({
-                                    letter: l,
-                                    text: txt,
-                                    isCorrect: (item.answer === l || item.correct === l || item.gabarito === l || item.label === i)
-                                });
-                            }
-                        });
-                    }
-
-                    const disc = item.discipline || item.subject || item.area || 'Conhecimentos Gerais';
-                    const qText = item.question || item.statement || item.enunciado || item.text || '';
-                    const ctx = item.context || item.support_text || item.texto || item.intro || '';
-
-                    return {
-                        id: `q-${Math.random().toString(36).substr(2, 9)}`,
-                        year: item.year || item.ano || defaultYear,
-                        discipline: formatDiscipline(disc),
-                        context: ctx,
-                        question: qText,
-                        alternatives: options
-                    };
-                } catch(e) { return null; }
-            }).filter(q => q && q.alternatives.length >= 2 && q.question.length > 5);
-        }
-
-        function formatDiscipline(disc) {
-            const l = String(disc).toLowerCase();
-            if (l.includes('humana') || l.includes('history')) return 'Ciências Humanas';
-            if (l.includes('natureza') || l.includes('biology') || l.includes('physics')) return 'Ciências da Natureza';
-            if (l.includes('linguagem') || l.includes('portuguese') || l.includes('english')) return 'Linguagens';
-            if (l.includes('matemática') || l.includes('math')) return 'Matemática';
-            return 'Conhecimentos Gerais';
-        }
-
-        function getDisciplineStyles(disc) {
-            switch(disc) {
-                case 'Ciências Humanas': return { icon: 'fa-landmark', color: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800/50' };
-                case 'Ciências da Natureza': return { icon: 'fa-flask', color: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800/50' };
-                case 'Linguagens': return { icon: 'fa-language', color: 'bg-pink-100 text-pink-800 border-pink-200 dark:bg-pink-900/30 dark:text-pink-300 dark:border-pink-800/50' };
-                case 'Matemática': return { icon: 'fa-square-root-variable', color: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/50' };
-                default: return { icon: 'fa-book', color: 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-slate-700 dark:text-gray-300 dark:border-gray-600' };
-            }
-        }
-
-        // =========================================================
-        // LÓGICA DE UI E FILTROS
-        // =========================================================
-        function extractAndRenderFilters(data) {
-            const years = new Set(), disciplines = new Set();
-            data.forEach(q => { years.add(q.year); disciplines.add(q.discipline); });
-
-            const yArr = Array.from(years).sort((a,b) => b - a);
-            const dArr = Array.from(disciplines).sort();
-
-            document.getElementById('filter-years').innerHTML = yArr.map(y => `
-                <label class="flex items-center cursor-pointer group py-1">
-                    <div class="relative flex items-center justify-center w-5 h-5 mr-3 border-2 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-slate-800 group-hover:border-blue-500 transition-colors">
+            document.getElementById('filter-years').innerHTML = Array.from(years).sort((a,b) => b-a).map(y => `
+                <label class="flex items-center p-1.5 hover:bg-[#0d1117] rounded cursor-pointer group transition-colors">
+                    <div class="relative flex items-center justify-center w-4 h-4 mr-3 border border-ghBorder rounded bg-ghBg group-hover:border-ghBlue transition-colors">
                         <input type="checkbox" value="${y}" class="filter-checkbox filter-year opacity-0 absolute w-full h-full cursor-pointer checkbox-custom">
-                        <div class="w-full h-full rounded flex items-center justify-center pointer-events-none transition-colors">
-                            <i class="fa-solid fa-check text-white text-[10px] hidden"></i>
+                        <div class="w-full h-full rounded pointer-events-none flex items-center justify-center transition-colors">
+                            <i class="fa-solid fa-check text-white text-[9px] hidden"></i>
                         </div>
                     </div>
-                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${y}</span>
-                </label>`).join('');
+                    <span class="text-sm text-ghText group-hover:text-white transition-colors">${y}</span>
+                </label>
+            `).join('');
 
-            document.getElementById('filter-disciplines').innerHTML = dArr.map(d => {
-                const s = getDisciplineStyles(d);
-                return `
-                <label class="flex items-center cursor-pointer group py-1">
-                    <div class="relative flex items-center justify-center w-5 h-5 mr-3 border-2 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-slate-800 group-hover:border-blue-500 transition-colors">
+            document.getElementById('filter-disciplines').innerHTML = Array.from(disciplines).sort().map(d => `
+                <label class="flex items-center p-1.5 hover:bg-[#0d1117] rounded cursor-pointer group transition-colors">
+                    <div class="relative flex items-center justify-center w-4 h-4 mr-3 border border-ghBorder rounded bg-ghBg group-hover:border-ghBlue transition-colors">
                         <input type="checkbox" value="${d}" class="filter-checkbox filter-discipline opacity-0 absolute w-full h-full cursor-pointer checkbox-custom">
-                        <div class="w-full h-full rounded flex items-center justify-center pointer-events-none transition-colors">
-                            <i class="fa-solid fa-check text-white text-[10px] hidden"></i>
+                        <div class="w-full h-full rounded pointer-events-none flex items-center justify-center transition-colors">
+                            <i class="fa-solid fa-check text-white text-[9px] hidden"></i>
                         </div>
                     </div>
-                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <i class="fa-solid ${s.icon} opacity-50 w-4 text-center"></i> ${d}
-                    </span>
-                </label>`}).join('');
+                    <span class="text-sm text-ghText group-hover:text-white transition-colors line-clamp-1" title="${d}">${d}</span>
+                </label>
+            `).join('');
 
             document.querySelectorAll('.filter-checkbox').forEach(cb => {
                 cb.addEventListener('change', () => {
@@ -499,10 +475,10 @@
                     state.filters.discipline = Array.from(discCbs).map(c => c.value);
                     state.currentPage = 1;
                     
-                    const clearBtn = document.getElementById('clear-filters');
+                    const btn = document.getElementById('clear-filters');
                     (state.filters.year.length || state.filters.discipline.length || state.filters.search) 
-                        ? clearBtn.classList.remove('hidden') 
-                        : clearBtn.classList.add('hidden');
+                        ? btn.classList.remove('hidden') 
+                        : btn.classList.add('hidden');
                         
                     applyFilters();
                 });
@@ -522,155 +498,145 @@
 
         function formatText(text) {
             if (!text) return '';
-            let s = String(text);
-            if (s.includes('<p>') || s.includes('<br>')) return s; // Já está formatado em HTML nativo
-            return s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+            let t = String(text);
+            if (t.includes('<p>') || t.includes('<br>')) return t; // Se já tiver html
+            // Processa line breaks para HTML válido e escapa tags maliciosas
+            return t.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br><span class="block mt-1"></span>');
         }
 
         function renderQuestions() {
             const container = document.getElementById('questions-container');
             const stats = document.getElementById('results-stats');
 
-            if (state.error) {
-                container.innerHTML = `
-                    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-2xl p-8 text-center shadow-sm">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/50 mb-4 text-red-500 text-2xl">
-                            <i class="fa-solid fa-shield-cat"></i>
-                        </div>
-                        <h2 class="text-xl font-bold text-red-700 dark:text-red-400 mb-2">Bloqueio de Ambiente Detectado</h2>
-                        <p class="text-red-600 dark:text-red-300 max-w-md mx-auto text-sm">${state.error}</p>
-                    </div>`;
-                return;
-            }
-
             if (state.filteredQuestions.length === 0 && !state.loading) {
-                stats.innerText = '0 questões';
+                stats.innerText = '0 instâncias encontradas';
                 container.innerHTML = `
-                    <div class="bg-white dark:bg-darkCard border border-gray-200 dark:border-gray-800 rounded-2xl p-12 text-center shadow-sm">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-slate-800 mb-4 text-gray-400 text-2xl">
-                            <i class="fa-solid fa-ghost"></i>
-                        </div>
-                        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Sem resultados</h2>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Nenhuma questão corresponde a estes filtros.</p>
+                    <div class="border border-ghBorder border-dashed rounded-xl p-12 text-center text-ghMuted">
+                        <i class="fa-solid fa-code-pull-request text-4xl mb-4 text-ghBorder"></i>
+                        <h2 class="text-lg font-semibold text-ghText mb-1">Nenhum resultado</h2>
+                        <p class="text-sm">Altere seus filtros para encontrar questões.</p>
                     </div>`;
                 document.getElementById('pagination-container').innerHTML = '';
                 return;
             }
 
             const total = state.filteredQuestions.length;
-            const startIdx = (state.currentPage - 1) * state.itemsPerPage;
-            const endIdx = startIdx + state.itemsPerPage;
-            const slice = state.filteredQuestions.slice(startIdx, endIdx);
+            const start = (state.currentPage - 1) * state.itemsPerPage;
+            const end = start + state.itemsPerPage;
+            const slice = state.filteredQuestions.slice(start, end);
 
-            stats.innerHTML = `Mostrando <strong class="text-blue-900 dark:text-blue-200">${startIdx + 1}-${Math.min(endIdx, total)}</strong> de <strong class="text-blue-900 dark:text-blue-200">${total}</strong>`;
+            stats.innerHTML = `Mostrando <span class="text-white">${start + 1}-${Math.min(end, total)}</span> de <span class="text-white">${total}</span> issues`;
 
             container.innerHTML = slice.map(q => {
-                const s = getDisciplineStyles(q.discipline);
-                const fallbackCorrect = q.alternatives.some(a=>a.isCorrect) ? false : true; // Evita quebrar se banco de dados não possuir resposta
+                const badgeStyle = getDisciplineColor(q.discipline);
+                // Previne quebra caso a IA não tenha definido a resposta certa no JSON
+                const fallback = q.alternatives.some(a=>a.isCorrect) ? false : true; 
                 
                 return `
-                <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 sm:p-8 mb-6 hover:shadow-md transition-shadow">
-                    <div class="flex flex-wrap items-center justify-between mb-6 gap-3">
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1.5 bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-xs font-bold uppercase tracking-wider rounded-lg flex items-center gap-1.5">
-                                <i class="fa-regular fa-calendar-check"></i> ENEM ${q.year}
-                            </span>
-                            <span class="px-3 py-1.5 ${s.color} border text-xs font-bold uppercase tracking-wider rounded-lg flex items-center gap-1.5">
-                                <i class="fa-solid ${s.icon}"></i> ${q.discipline}
-                            </span>
-                        </div>
+                <div class="bg-ghCard border border-ghBorder rounded-xl p-6 sm:p-8 hover:border-ghMuted/50 transition-colors shadow-sm relative group" id="q-${q.id}">
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-2.5 py-1 text-[10px] font-mono font-semibold uppercase tracking-wide border rounded-md ${badgeStyle}">
+                            ${q.discipline}
+                        </span>
+                        <span class="px-2.5 py-1 text-[10px] font-mono font-semibold text-ghMuted border border-ghBorder bg-[#0d1117] rounded-md">
+                            ENEM ${q.year}
+                        </span>
+                        <span class="ml-auto text-[10px] font-mono text-ghMuted/50 group-hover:text-ghMuted transition-colors pt-1">
+                            #${q.id}
+                        </span>
                     </div>
                     
-                    <div class="prose dark:prose-invert max-w-none mb-8 text-gray-800 dark:text-gray-100">
-                        ${q.context ? `<div class="mb-5 text-sm sm:text-base text-gray-600 dark:text-gray-400 border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-1 italic leading-relaxed break-words">${formatText(q.context)}</div>` : ''}
-                        <div class="font-semibold text-base sm:text-[1.1rem] leading-relaxed break-words text-justify">${formatText(q.question)}</div>
+                    <div class="mb-7 text-ghText text-[15px] sm:text-base leading-relaxed">
+                        ${q.context ? `<div class="mb-4 text-ghMuted border-l-2 border-ghBorder pl-4 py-1 italic break-words">${formatText(q.context)}</div>` : ''}
+                        <div class="font-medium break-words text-white">${formatText(q.question)}</div>
                     </div>
                     
-                    <div class="space-y-3 mb-6 options-container" data-id="${q.id}">
+                    <div class="space-y-2 mb-7">
                         ${q.alternatives.map((alt, i) => `
-                            <label class="flex items-start p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors w-full ${(alt.isCorrect || (fallbackCorrect && i===0)) ? 'correct-option' : 'wrong-option'}">
-                                <div class="flex items-center mt-0.5 shrink-0">
-                                    <input type="radio" name="r-${q.id}" value="${alt.letter}">
+                            <label class="flex items-start p-3.5 rounded-lg border border-ghBorder bg-[#0d1117] hover:bg-[#1f242c] cursor-pointer transition-colors w-full ${(alt.isCorrect || (fallback && i===0)) ? 'correct-option' : 'wrong-option'}">
+                                <div class="relative flex items-center justify-center w-5 h-5 mt-0.5 mr-4 border border-ghMuted rounded-full shrink-0">
+                                    <input type="radio" name="r-${q.id}" value="${alt.letter}" class="github-radio opacity-0 absolute w-full h-full cursor-pointer">
+                                    <div class="w-full h-full rounded-full pointer-events-none transition-colors flex items-center justify-center">
+                                        <div class="w-2 h-2 rounded-full bg-white scale-0 transition-transform"></div>
+                                    </div>
                                 </div>
-                                <div class="ml-4 flex-1 text-sm sm:text-base leading-relaxed break-words">
-                                    <span class="font-black mr-2 text-gray-900 dark:text-white option-letter">${alt.letter}.</span>
-                                    <span class="text-gray-700 dark:text-gray-300 option-text">${formatText(alt.text)}</span>
+                                <div class="flex-1 text-sm leading-relaxed break-words">
+                                    <span class="font-bold text-white mr-1 option-label">${alt.letter}.</span>
+                                    <span class="text-ghText option-text">${formatText(alt.text)}</span>
                                 </div>
                             </label>
                         `).join('')}
                     </div>
                     
-                    <div class="flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-6 mt-4">
-                        <div class="text-xs text-gray-400 flex items-center gap-2 font-medium">
-                            <i class="fa-solid fa-code-commit"></i> API Ref: ${q.id.substring(0,6)}
-                        </div>
-                        <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all text-sm flex items-center gap-2 shadow-sm focus:ring-4 focus:ring-blue-500/30" onclick="revealAnswer('${q.id}', this)">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Revelar Gabarito
+                    <div class="flex justify-start border-t border-ghBorder pt-5">
+                        <button class="px-4 py-2 bg-[#21262d] hover:bg-[#30363d] border border-ghBorder text-ghText rounded-md font-semibold text-[13px] transition-colors flex items-center gap-2" onclick="revealAnswer('${q.id}', this)">
+                            <i class="fa-regular fa-eye"></i> Revelar Gabarito
                         </button>
                     </div>
                 </div>`;
             }).join('');
 
+            // Adiciona CSS para o radio interno (o bolinho branco)
+            const style = document.createElement('style');
+            style.innerHTML = `.github-radio:checked + div > div { transform: scale(1); }`;
+            container.appendChild(style);
+
             renderPagination();
 
-            // Re-renderizar Fórmulas via MathJax
+            // Re-renderiza Fórmulas com o MathJax
             if (window.MathJax && window.MathJax.typesetPromise) {
                 MathJax.typesetPromise([container]).catch(err => console.log('MathJax:', err.message));
             }
         }
 
         window.revealAnswer = function(id, btn) {
-            const container = document.querySelector(`.options-container[data-id="${id}"]`);
-            if (!container) return;
-            
+            const container = document.getElementById(`q-${id}`);
             container.classList.add('show-results');
+            
+            container.querySelectorAll('input').forEach(r => r.disabled = true);
             
             const selected = container.querySelector('input[type="radio"]:checked');
             if (selected) {
                 const label = selected.closest('label');
-                if (!label.classList.contains('correct-option')) {
-                    label.classList.add('wrong-selected');
-                }
+                if (!label.classList.contains('correct-option')) label.classList.add('wrong-selected');
             }
             
-            container.querySelectorAll('input').forEach(r => r.disabled = true);
-            
-            btn.innerHTML = `<i class="fa-solid fa-check-double"></i> Resolvido`;
-            btn.className = "px-5 py-2.5 bg-gray-200 dark:bg-slate-700 text-gray-500 dark:text-gray-400 rounded-xl font-bold text-sm flex items-center gap-2 cursor-default";
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> Finalizado`;
+            btn.className = "px-4 py-2 bg-[#238636] border border-[#2ea043] text-white rounded-md font-semibold text-[13px] flex items-center gap-2 cursor-default shadow-sm";
             btn.disabled = true;
         }
 
         function renderPagination() {
-            const total = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
+            const t = Math.ceil(state.filteredQuestions.length / state.itemsPerPage);
             const c = document.getElementById('pagination-container');
-            if (total <= 1) return c.innerHTML = '';
+            if (t <= 1) return c.innerHTML = '';
             
-            let h = `<div class="flex justify-center items-center gap-2">`;
+            let h = `<div class="flex justify-center items-center gap-1.5 mt-2">`;
             
-            h += `<button onclick="goPage(${state.currentPage - 1})" ${state.currentPage === 1 ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl border ${state.currentPage === 1 ? 'border-gray-200 text-gray-400 dark:border-gray-800 dark:text-gray-600 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800'} transition-colors"><i class="fa-solid fa-angle-left"></i></button>`;
+            const btnClass = "min-w-[32px] h-8 px-2 flex items-center justify-center rounded-md border border-ghBorder bg-ghBg text-ghText text-sm font-medium hover:bg-[#1f242c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+            const activeClass = "min-w-[32px] h-8 px-2 flex items-center justify-center rounded-md border border-ghBlue bg-ghBlue text-white text-sm font-medium shadow-sm";
+            
+            h += `<button onclick="goPage(${state.currentPage - 1})" ${state.currentPage === 1 ? 'disabled' : ''} class="${btnClass}"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>`;
             
             let start = Math.max(1, state.currentPage - 2);
-            let end = Math.min(total, state.currentPage + 2);
+            let end = Math.min(t, state.currentPage + 2);
             
             if (start > 1) {
-                h += `<button onclick="goPage(1)" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 font-bold transition-colors">1</button>`;
-                if (start > 2) h += `<span class="px-1 text-gray-400">...</span>`;
+                h += `<button onclick="goPage(1)" class="${btnClass}">1</button>`;
+                if (start > 2) h += `<span class="px-1 text-ghMuted">...</span>`;
             }
             
             for (let i = start; i <= end; i++) {
-                if (i === state.currentPage) {
-                    h += `<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-600 text-white font-black shadow-sm ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-[#0b1120]">${i}</button>`;
-                } else {
-                    h += `<button onclick="goPage(${i})" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 font-bold transition-colors">${i}</button>`;
-                }
+                if (i === state.currentPage) h += `<button class="${activeClass}">${i}</button>`;
+                else h += `<button onclick="goPage(${i})" class="${btnClass}">${i}</button>`;
             }
             
-            if (end < total) {
-                if (end < total - 1) h += `<span class="px-1 text-gray-400">...</span>`;
-                h += `<button onclick="goPage(${total})" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800 font-bold transition-colors">${total}</button>`;
+            if (end < t) {
+                if (end < t - 1) h += `<span class="px-1 text-ghMuted">...</span>`;
+                h += `<button onclick="goPage(${t})" class="${btnClass}">${t}</button>`;
             }
             
-            h += `<button onclick="goPage(${state.currentPage + 1})" ${state.currentPage === total ? 'disabled' : ''} class="w-10 h-10 flex items-center justify-center rounded-xl border ${state.currentPage === total ? 'border-gray-200 text-gray-400 dark:border-gray-800 dark:text-gray-600 cursor-not-allowed' : 'border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-800'} transition-colors"><i class="fa-solid fa-angle-right"></i></button></div>`;
+            h += `<button onclick="goPage(${state.currentPage + 1})" ${state.currentPage === t ? 'disabled' : ''} class="${btnClass}"><i class="fa-solid fa-chevron-right text-[10px]"></i></button></div>`;
             c.innerHTML = h;
         }
 
